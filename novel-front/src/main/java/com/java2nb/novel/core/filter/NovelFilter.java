@@ -64,6 +64,7 @@ public class NovelFilter implements Filter {
         CacheService cacheService = SpringUtil.getBean(CacheService.class);
         if("pc".equals(to)){
             //直接进PC站
+            // PC 端使用默认模板目录，不额外追加前缀，避免把视图名拼成 templates/index。
             cacheService.set(CacheKey.TEMPLATE_DIR_KEY+userMark,"",60*60*24);
         }else if("mobile".equals(to)){
             //直接进手机站
@@ -75,6 +76,7 @@ public class NovelFilter implements Filter {
                 ThreadLocalUtil.setTemplateDir("mobile/");
             }else{
                 //PC端访问
+                // PC 端走默认模板目录，保持和 classpath:/templates 下的视图解析规则一致。
                 ThreadLocalUtil.setTemplateDir("");
             }
         }
