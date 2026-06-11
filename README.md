@@ -116,6 +116,7 @@ cd /www/wwwroot/novel-plus
 mvn clean package -DskipTests
 systemctl restart novel-front
 systemctl restart novel-admin
+systemctl restart novel-crawl
 ```
 
 ## 微信公众号
