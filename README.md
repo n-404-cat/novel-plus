@@ -110,6 +110,14 @@ spring:
 
 👉 [了解详情](https://novel.xxyopen.com/service.htm)
 
+## 线上部署
+```shell
+cd /www/wwwroot/novel-plus
+mvn clean package -DskipTests
+systemctl restart novel-front
+systemctl restart novel-admin
+```
+
 ## 微信公众号
 
 发布最新更新动态、最新前端模版、最新爬虫规则、文档教程等。
