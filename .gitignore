@@ -4,4 +4,9 @@
 **/target
 **/*.iml
 **/.DS_Store
-
+config/local/
+config/*.local.yml
+config/*.local.yaml
+novel-admin/src/main/resources/application-local.yml
+novel-front/src/main/resources/application-local.yml
+novel-crawl/src/main/resources/application-local.yml

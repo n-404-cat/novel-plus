@@ -11,7 +11,7 @@ server:
 spring:
   datasource:
     driverClassName: org.apache.shardingsphere.driver.ShardingSphereDriver
-    url: jdbc:shardingsphere:absolutepath:${user.dir}/config/shardingsphere-jdbc.yml
+    url: jdbc:shardingsphere:absolutepath:${SHARDING_CONFIG_PATH:${user.dir}/config/shardingsphere-jdbc.yml}
   thymeleaf:
     mode: LEGACYHTML5
     cache: false
