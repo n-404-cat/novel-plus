@@ -30,7 +30,7 @@ public class RedisManager {
     @Value("${spring.redis.timeout}")
     private int timeout = 0;
 
-    @Value("${spring.redis.password}")
+    @Value("${spring.redis.password:}")
     private String password = "";
 
     private static JedisPool jedisPool = null;

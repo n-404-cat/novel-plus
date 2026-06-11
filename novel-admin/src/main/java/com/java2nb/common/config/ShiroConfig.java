@@ -29,7 +29,7 @@ public class ShiroConfig {
 
     @Value("${spring.redis.host}")
     private String host;
-    @Value("${spring.redis.password}")
+    @Value("${spring.redis.password:}")
     private String password;
     @Value("${spring.redis.port}")
     private int port;
