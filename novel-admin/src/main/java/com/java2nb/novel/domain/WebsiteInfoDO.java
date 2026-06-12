@@ -44,6 +44,8 @@ public class WebsiteInfoDO implements Serializable {
 			private String logo;
 	//网站logo图片（深色）
 			private String logoDark;
+	//前台模板名称
+			private String templateName;
 	//创建时间
 			@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 		private Date createTime;
@@ -156,6 +158,18 @@ public class WebsiteInfoDO implements Serializable {
 	 */
 	public String getLogoDark() {
 		return logoDark;
+	}
+	/**
+	 * 设置：前台模板名称
+	 */
+	public void setTemplateName(String templateName) {
+		this.templateName = templateName;
+	}
+	/**
+	 * 获取：前台模板名称
+	 */
+	public String getTemplateName() {
+		return templateName;
 	}
 	/**
 	 * 设置：创建时间

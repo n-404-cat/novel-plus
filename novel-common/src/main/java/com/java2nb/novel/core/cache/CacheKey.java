@@ -42,6 +42,11 @@ public interface CacheKey {
     String TEMPLATE_DIR_KEY =  "templateDirKey";;
 
     /**
+     * 网站信息缓存
+     * */
+    String WEBSITE_INFO_KEY = "websiteInfoKey";
+
+    /**
      * 上一次搜索引擎更新的时间
      * */
     String ES_LAST_UPDATE_TIME = "esLastUpdateTime";

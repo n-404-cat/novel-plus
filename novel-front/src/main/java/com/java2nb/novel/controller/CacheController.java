@@ -38,7 +38,7 @@ public class CacheController {
 
     /**
      * 刷新缓存
-     * @param type 缓存类型，1：首页书籍推荐，2：首页新闻，3：首页友情链接
+     * @param type 缓存类型，1：首页书籍推荐，2：首页新闻，3：首页友情链接，4：网站配置与模板缓存
      * */
     @GetMapping("refresh/{pass}/{type}")
     public RestResult<Void> refreshCache(@PathVariable("type") Byte type, @PathVariable("pass") String pass){
@@ -62,6 +62,11 @@ public class CacheController {
                 //刷新首页友情链接
                 cacheService.del(CacheKey.INDEX_LINK_KEY);
                 friendLinkService.listIndexLink();
+                break;
+            }
+            case 4:{
+                // 刷新网站配置和模板相关缓存，后台修改网站信息后可立即生效。
+                cacheService.del(CacheKey.WEBSITE_INFO_KEY);
                 break;
             }
             default:{

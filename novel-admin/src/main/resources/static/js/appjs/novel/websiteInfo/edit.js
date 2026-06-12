@@ -79,7 +79,7 @@ function update() {
         },
         success: function (data) {
             if (data.code == 0) {
-                layer.msg("操作成功，重启 novel-front 后生效");
+                layer.msg(data.msg || "操作成功，已生效");
             } else {
                 layer.alert(data.msg)
             }
@@ -97,3 +97,27 @@ function validateRule() {
         messages: {}
     })
 }
+
+window.clearWebsiteCache = function () {
+    $.ajax({
+        cache: true,
+        type: "POST",
+        url: "/novel/websiteInfo/clearCache",
+        dataType: "json",
+        async: false,
+        error: function (xhr) {
+            layer.alert(xhr && xhr.responseText ? xhr.responseText : "Connection error");
+        },
+        success: function (data) {
+            if (data && data.code == 0) {
+                layer.msg(data.msg || "缓存已清理");
+                return;
+            }
+            if (data && data.msg) {
+                layer.alert(data.msg);
+                return;
+            }
+            layer.alert("请求已返回，但响应不是预期的 JSON，请检查是否已登录或是否具备权限。");
+        }
+    });
+};

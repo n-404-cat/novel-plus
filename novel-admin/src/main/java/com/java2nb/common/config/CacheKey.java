@@ -40,7 +40,11 @@ public interface CacheKey {
      * 模板目录保存key
      */
     String TEMPLATE_DIR_KEY = "templateDirKey";
-    ;
+
+    /**
+     * 网站信息缓存
+     */
+    String WEBSITE_INFO_KEY = "websiteInfoKey";
 
     /**
      * 正在运行的爬虫线程存储KEY前缀

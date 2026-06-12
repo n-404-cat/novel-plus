@@ -1,6 +1,6 @@
 #端口号
 server:
-  port: 8081
+  port: 8085
   servlet:
     session:
       timeout: 1D
@@ -12,7 +12,7 @@ spring:
 #登录用户名密码
 admin:
   username: admin
-  password: admin
+  password: ${CRAWL_ADMIN_PASSWORD:admin}
 
 
 
@@ -37,9 +37,9 @@ spring:
     #发件人昵称
     nickname: novel-plus
     #邮箱账户
-    username: xxyopen@163.com
+    username: ${NOVEL_MAIL_USERNAME:}
     #邮箱第三方授权码
-    password: novel123456
+    password: ${NOVEL_MAIL_PASSWORD:}
     #编码类型
     default-encoding: UTF-8
     port: 465
@@ -63,6 +63,4 @@ disk-monitor:
   severe-threshold: 90.0
   critical-threshold: 95.0
   # 告警邮件接收人列表（支持多个邮箱）
-  recipients: xxyopen@foxmail.com,12345678@qq.com
-
-
+  recipients: ${DISK_MONITOR_RECIPIENTS:}

@@ -75,8 +75,21 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label class="col-sm-3 control-label">前台模板：</label>
+                            <div class="col-sm-8">
+                                <select id="templateName" name="templateName" class="form-control">
+                                    <option value="green" th:selected="${websiteInfo.templateName == null || websiteInfo.templateName == 'green'}">green</option>
+                                    <option value="orange" th:selected="${websiteInfo.templateName == 'orange'}">orange</option>
+                                    <option value="blue" th:selected="${websiteInfo.templateName == 'blue'}">blue</option>
+                                    <option value="dark" th:selected="${websiteInfo.templateName == 'dark'}">dark</option>
+                                </select>
+                                <span class="help-block m-b-none">保存后立即生效；如需强制失效 Redis 网站配置缓存，可手动清理。</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <div class="col-sm-8 col-sm-offset-3">
                                 <button type="submit" class="btn btn-primary">保存</button>
+                                <button type="button" class="btn btn-default" onclick="clearWebsiteCache()">清理缓存</button>
                             </div>
                         </div>
                     </form>
@@ -87,7 +100,7 @@
 </div>
 <div th:include="include::footer"></div>
 <script type="text/javascript" src="/wangEditor/release/wangEditor.js"></script>
-<script type="text/javascript" src="/js/appjs/novel/websiteInfo/edit.js">
+<script type="text/javascript" src="/js/appjs/novel/websiteInfo/edit.js?v=20260612">
 </script>
 </body>
 </html>

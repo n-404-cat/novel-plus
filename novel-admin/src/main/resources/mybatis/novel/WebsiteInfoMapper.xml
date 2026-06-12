@@ -4,11 +4,11 @@
 <mapper namespace="com.java2nb.novel.dao.WebsiteInfoDao">
 
 	<select id="get" resultType="com.java2nb.novel.domain.WebsiteInfoDO">
-		select `id`,`name`,`domain`,`keyword`,`description`,`qq`,`logo`,`logo_dark`,`create_time`,`create_user_id`,`update_time`,`update_user_id` from website_info where id = #{value}
+		select `id`,`name`,`domain`,`keyword`,`description`,`qq`,`logo`,`logo_dark`,`template_name`,`create_time`,`create_user_id`,`update_time`,`update_user_id` from website_info where id = #{value}
 	</select>
 
 	<select id="list" resultType="com.java2nb.novel.domain.WebsiteInfoDO">
-		select `id`,`name`,`domain`,`keyword`,`description`,`qq`,`logo`,`logo_dark`,`create_time`,`create_user_id`,`update_time`,`update_user_id` from website_info
+		select `id`,`name`,`domain`,`keyword`,`description`,`qq`,`logo`,`logo_dark`,`template_name`,`create_time`,`create_user_id`,`update_time`,`update_user_id` from website_info
         <where>  
 		  		  <if test="id != null and id != ''"> and id = #{id} </if>
 		  		  <if test="name != null and name != ''"> and name = #{name} </if>
@@ -18,6 +18,7 @@
 		  		  <if test="qq != null and qq != ''"> and qq = #{qq} </if>
 		  		  <if test="logo != null and logo != ''"> and logo = #{logo} </if>
 		  		  <if test="logoDark != null and logoDark != ''"> and logo_dark = #{logoDark} </if>
+		  		  <if test="templateName != null and templateName != ''"> and template_name = #{templateName} </if>
 		  		  <if test="createTime != null and createTime != ''"> and create_time = #{createTime} </if>
 		  		  <if test="createUserId != null and createUserId != ''"> and create_user_id = #{createUserId} </if>
 		  		  <if test="updateTime != null and updateTime != ''"> and update_time = #{updateTime} </if>
@@ -47,6 +48,7 @@
 		  		  <if test="qq != null and qq != ''"> and qq = #{qq} </if>
 		  		  <if test="logo != null and logo != ''"> and logo = #{logo} </if>
 		  		  <if test="logoDark != null and logoDark != ''"> and logo_dark = #{logoDark} </if>
+		  		  <if test="templateName != null and templateName != ''"> and template_name = #{templateName} </if>
 		  		  <if test="createTime != null and createTime != ''"> and create_time = #{createTime} </if>
 		  		  <if test="createUserId != null and createUserId != ''"> and create_user_id = #{createUserId} </if>
 		  		  <if test="updateTime != null and updateTime != ''"> and update_time = #{updateTime} </if>
@@ -65,6 +67,7 @@
 			`qq`, 
 			`logo`, 
 			`logo_dark`, 
+			`template_name`, 
 			`create_time`, 
 			`create_user_id`, 
 			`update_time`, 
@@ -80,6 +83,7 @@
 			#{qq}, 
 			#{logo}, 
 			#{logoDark}, 
+			#{templateName}, 
 			#{createTime}, 
 			#{createUserId}, 
 			#{updateTime}, 
@@ -98,6 +102,7 @@
 					<if test="qq != null"> `qq`,  </if>
 					<if test="logo != null"> `logo`,  </if>
 					<if test="logoDark != null"> `logo_dark`,  </if>
+					<if test="templateName != null"> `template_name`,  </if>
 					<if test="createTime != null"> `create_time`,  </if>
 					<if test="createUserId != null"> `create_user_id`,  </if>
 					<if test="updateTime != null"> `update_time`,  </if>
@@ -113,6 +118,7 @@
 					<if test="qq != null"> #{qq},  </if>
 					<if test="logo != null"> #{logo},  </if>
 					<if test="logoDark != null"> #{logoDark},  </if>
+					<if test="templateName != null"> #{templateName},  </if>
 					<if test="createTime != null"> #{createTime},  </if>
 					<if test="createUserId != null"> #{createUserId},  </if>
 					<if test="updateTime != null"> #{updateTime},  </if>
@@ -130,6 +136,7 @@
 			<if test="qq != null">`qq` = #{qq}, </if>
 			<if test="logo != null">`logo` = #{logo}, </if>
 			<if test="logoDark != null">`logo_dark` = #{logoDark}, </if>
+			<if test="templateName != null">`template_name` = #{templateName}, </if>
 			<if test="createTime != null">`create_time` = #{createTime}, </if>
 			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
 			<if test="updateTime != null">`update_time` = #{updateTime}, </if>
