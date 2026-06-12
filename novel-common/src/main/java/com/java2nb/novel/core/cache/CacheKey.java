@@ -47,6 +47,11 @@ public interface CacheKey {
     String WEBSITE_INFO_KEY = "websiteInfoKey";
 
     /**
+     * 支付配置缓存前缀，后面拼接渠道编码。
+     * */
+    String PAYMENT_CONFIG_KEY_PREFIX = "paymentConfigKey:";
+
+    /**
      * 上一次搜索引擎更新的时间
      * */
     String ES_LAST_UPDATE_TIME = "esLastUpdateTime";

@@ -9,9 +9,10 @@ import com.alipay.api.request.AlipayTradeWapPayRequest;
 import com.alipay.api.response.AlipayTradePagePayResponse;
 import com.alipay.api.response.AlipayTradeWapPayResponse;
 import com.java2nb.novel.core.bean.UserDetails;
-import com.java2nb.novel.core.config.AlipayProperties;
 import com.java2nb.novel.core.utils.ThreadLocalUtil;
+import com.java2nb.novel.entity.PaymentConfig;
 import com.java2nb.novel.service.OrderService;
+import com.java2nb.novel.service.PaymentConfigService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +37,7 @@ import java.util.Map;
 public class PayController extends BaseController {
 
 
-    private final AlipayProperties alipayConfig;
+    private final PaymentConfigService paymentConfigService;
 
     private final OrderService orderService;
 
@@ -53,60 +54,74 @@ public class PayController extends BaseController {
             //未登录，跳转到登录页面
             httpResponse.sendRedirect("/user/login.html?originUrl=/pay/index.html");
         } else {
-            //创建充值订单
-            Long outTradeNo = orderService.createPayOrder((byte) 1, payAmount, userDetails.getId());
-            //获得初始化的AlipayClient
-            AlipayClient alipayClient = new DefaultAlipayClient(alipayConfig.getGatewayUrl(),
-                alipayConfig.getAppId(), alipayConfig.getMerchantPrivateKey(), "json", alipayConfig.getCharset(),
-                alipayConfig.getPublicKey(), alipayConfig.getSignType());
-            String form;
-            if (ThreadLocalUtil.getTemplateDir().contains("mobile")) {
-                // 手机站
-                AlipayTradeWapPayRequest alipayRequest = new AlipayTradeWapPayRequest();
-                alipayRequest.setReturnUrl(alipayConfig.getReturnUrl());
-                //在公共参数中设置回跳和通知地址
-                alipayRequest.setNotifyUrl(alipayConfig.getNotifyUrl());
-                /******必传参数******/
-                JSONObject bizContent = new JSONObject();
-                //商户订单号，商家自定义，保持唯一性
-                bizContent.put("out_trade_no", outTradeNo);
-                //支付金额，最小值0.01元
-                bizContent.put("total_amount", payAmount);
-                //订单标题，不可使用特殊符号
-                bizContent.put("subject", "小说精品屋-plus");
-
-                /******可选参数******/
-                //手机网站支付默认传值FAST_INSTANT_TRADE_PAY
-                bizContent.put("product_code", "QUICK_WAP_WAY");
-
-                alipayRequest.setBizContent(bizContent.toString());
-                AlipayTradeWapPayResponse payResponse = alipayClient.pageExecute(alipayRequest);
-                form = payResponse.getBody();
-            } else {
-                // 电脑站
-                //创建API对应的request
-                AlipayTradePagePayRequest alipayRequest = new AlipayTradePagePayRequest();
-                alipayRequest.setReturnUrl(alipayConfig.getReturnUrl());
-                //在公共参数中设置回跳和通知地址
-                alipayRequest.setNotifyUrl(alipayConfig.getNotifyUrl());
-                //填充业务参数
-                alipayRequest.setBizContent("{" +
-                    "    \"out_trade_no\":\"" + outTradeNo + "\"," +
-                    "    \"product_code\":\"FAST_INSTANT_TRADE_PAY\"," +
-                    "    \"total_amount\":" + payAmount + "," +
-                    "    \"subject\":\"小说精品屋-plus\"" +
-                    "  }");
-                //调用SDK生成表单
-                AlipayTradePagePayResponse payResponse = alipayClient.pageExecute(alipayRequest);
-                form = payResponse.getBody();
-
+            if (!paymentConfigService.isAlipayEnabled()) {
+                writePlainText(httpResponse, "支付宝支付暂未开启，请联系管理员");
+                return;
             }
+            PaymentConfig alipayConfig = paymentConfigService.getAlipayConfig();
+            if (!hasRequiredAlipayFields(alipayConfig)) {
+                log.error("支付宝支付配置不完整，无法发起支付，channelCode={}", alipayConfig.getChannelCode());
+                writePlainText(httpResponse, "支付配置不完整，请联系管理员");
+                return;
+            }
+            try {
+                //创建充值订单
+                Long outTradeNo = orderService.createPayOrder((byte) 1, payAmount, userDetails.getId());
+                //获得初始化的AlipayClient
+                AlipayClient alipayClient = new DefaultAlipayClient(alipayConfig.getGatewayUrl(),
+                    alipayConfig.getAppId(), alipayConfig.getPrivateKey(), "json", alipayConfig.getCharset(),
+                    alipayConfig.getPublicKey(), alipayConfig.getSignType());
+                String form;
+                if (ThreadLocalUtil.getTemplateDir().contains("mobile")) {
+                    // 手机站
+                    AlipayTradeWapPayRequest alipayRequest = new AlipayTradeWapPayRequest();
+                    alipayRequest.setReturnUrl(alipayConfig.getReturnUrl());
+                    //在公共参数中设置回跳和通知地址
+                    alipayRequest.setNotifyUrl(alipayConfig.getNotifyUrl());
+                    /******必传参数******/
+                    JSONObject bizContent = new JSONObject();
+                    //商户订单号，商家自定义，保持唯一性
+                    bizContent.put("out_trade_no", outTradeNo);
+                    //支付金额，最小值0.01元
+                    bizContent.put("total_amount", payAmount);
+                    //订单标题，不可使用特殊符号
+                    bizContent.put("subject", "小说精品屋-plus");
 
-            httpResponse.setContentType("text/html;charset=utf-8");
-            //直接将完整的表单html输出到页面
-            httpResponse.getWriter().write(form);
-            httpResponse.getWriter().flush();
-            httpResponse.getWriter().close();
+                    /******可选参数******/
+                    //手机网站支付默认传值FAST_INSTANT_TRADE_PAY
+                    bizContent.put("product_code", "QUICK_WAP_WAY");
+
+                    alipayRequest.setBizContent(bizContent.toString());
+                    AlipayTradeWapPayResponse payResponse = alipayClient.pageExecute(alipayRequest);
+                    form = payResponse.getBody();
+                } else {
+                    // 电脑站
+                    //创建API对应的request
+                    AlipayTradePagePayRequest alipayRequest = new AlipayTradePagePayRequest();
+                    alipayRequest.setReturnUrl(alipayConfig.getReturnUrl());
+                    //在公共参数中设置回跳和通知地址
+                    alipayRequest.setNotifyUrl(alipayConfig.getNotifyUrl());
+                    //填充业务参数
+                    alipayRequest.setBizContent("{" +
+                        "    \"out_trade_no\":\"" + outTradeNo + "\"," +
+                        "    \"product_code\":\"FAST_INSTANT_TRADE_PAY\"," +
+                        "    \"total_amount\":" + payAmount + "," +
+                        "    \"subject\":\"小说精品屋-plus\"" +
+                        "  }");
+                    //调用SDK生成表单
+                    AlipayTradePagePayResponse payResponse = alipayClient.pageExecute(alipayRequest);
+                    form = payResponse.getBody();
+                }
+
+                httpResponse.setContentType("text/html;charset=utf-8");
+                //直接将完整的表单html输出到页面
+                httpResponse.getWriter().write(form);
+                httpResponse.getWriter().flush();
+                httpResponse.getWriter().close();
+            } catch (Exception e) {
+                log.error("发起支付宝支付失败，payAmount={}, userId={}", payAmount, userDetails.getId(), e);
+                writePlainText(httpResponse, "支付发起失败，请检查后台支付配置");
+            }
         }
 
 
@@ -120,6 +135,12 @@ public class PayController extends BaseController {
     public void aliPayNotify(HttpServletRequest request, HttpServletResponse httpResponse) {
 
         PrintWriter out = httpResponse.getWriter();
+        PaymentConfig alipayConfig = paymentConfigService.getAlipayConfig();
+        if (!hasRequiredAlipayFields(alipayConfig)) {
+            log.error("支付宝回调验签失败，原因是支付配置不完整");
+            out.println("fail");
+            return;
+        }
 
         //获取支付宝POST过来的信息
         Map<String, String> params = new HashMap<>();
@@ -164,6 +185,28 @@ public class PayController extends BaseController {
 
         }
 
+    }
+
+    private boolean hasRequiredAlipayFields(PaymentConfig paymentConfig) {
+        return paymentConfig != null
+            && isNotBlank(paymentConfig.getAppId())
+            && isNotBlank(paymentConfig.getPrivateKey())
+            && isNotBlank(paymentConfig.getPublicKey())
+            && isNotBlank(paymentConfig.getNotifyUrl())
+            && isNotBlank(paymentConfig.getReturnUrl())
+            && isNotBlank(paymentConfig.getGatewayUrl())
+            && isNotBlank(paymentConfig.getCharset())
+            && isNotBlank(paymentConfig.getSignType());
+    }
+
+    private boolean isNotBlank(String value) {
+        return value != null && !value.trim().isEmpty();
+    }
+
+    private void writePlainText(HttpServletResponse response, String message) throws Exception {
+        response.setContentType("text/plain;charset=utf-8");
+        response.getWriter().write(message);
+        response.getWriter().flush();
     }
 
 }

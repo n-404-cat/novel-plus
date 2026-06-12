@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content ">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form class="form-horizontal m-t" id="signupForm">
+                        <input id="id" name="id" th:value="${paymentConfig.id}" type="hidden">
+                        <input id="channelCode" name="channelCode" th:value="${paymentConfig.channelCode}" type="hidden">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">支付渠道：</label>
+                            <div class="col-sm-8">
+                                <input id="channelName" name="channelName"
+                                       th:value="${paymentConfig.channelName}"
+                                       class="form-control"
+                                       type="text"
+                                       readonly>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">应用 ID：</label>
+                            <div class="col-sm-8">
+                                <input id="appId" name="appId"
+                                       th:value="${paymentConfig.appId}"
+                                       class="form-control"
+                                       type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">网关地址：</label>
+                            <div class="col-sm-8">
+                                <input id="gatewayUrl" name="gatewayUrl"
+                                       th:value="${paymentConfig.gatewayUrl}"
+                                       class="form-control"
+                                       type="text">
+                                <span class="help-block m-b-none">可填写沙箱或正式网关，留空时前台回退到本地环境变量配置。</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">异步通知地址：</label>
+                            <div class="col-sm-8">
+                                <input id="notifyUrl" name="notifyUrl"
+                                       th:value="${paymentConfig.notifyUrl}"
+                                       class="form-control"
+                                       type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">回跳地址：</label>
+                            <div class="col-sm-8">
+                                <input id="returnUrl" name="returnUrl"
+                                       th:value="${paymentConfig.returnUrl}"
+                                       class="form-control"
+                                       type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">签名方式：</label>
+                            <div class="col-sm-8">
+                                <input id="signType" name="signType"
+                                       th:value="${paymentConfig.signType}"
+                                       class="form-control"
+                                       type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">字符集：</label>
+                            <div class="col-sm-8">
+                                <input id="charset" name="charset"
+                                       th:value="${paymentConfig.charset}"
+                                       class="form-control"
+                                       type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">运行环境：</label>
+                            <div class="col-sm-8">
+                                <select id="payEnvironment" name="payEnvironment" class="form-control">
+                                    <option value="sandbox" th:selected="${paymentConfig.payEnvironment == null || paymentConfig.payEnvironment == 'sandbox'}">sandbox</option>
+                                    <option value="production" th:selected="${paymentConfig.payEnvironment == 'production'}">production</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">启停状态：</label>
+                            <div class="col-sm-8">
+                                <select id="enabled" name="enabled" class="form-control">
+                                    <option value="1" th:selected="${paymentConfig.enabled == null || paymentConfig.enabled == 1}">启用</option>
+                                    <option value="0" th:selected="${paymentConfig.enabled == 0}">停用</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">支付宝公钥：</label>
+                            <div class="col-sm-8">
+                                <textarea id="publicKey" name="publicKey" class="form-control" rows="6" th:text="${paymentConfig.publicKey}"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">商户私钥：</label>
+                            <div class="col-sm-8">
+                                <textarea id="privateKey" name="privateKey" class="form-control" rows="8" th:text="${paymentConfig.privateKey}"></textarea>
+                                <span class="help-block m-b-none">后台保存后会立即清理前台缓存，请确认录入内容来自本地私有环境，不要把真实密钥提交到仓库。</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">备注：</label>
+                            <div class="col-sm-8">
+                                <input id="remark" name="remark"
+                                       th:value="${paymentConfig.remark}"
+                                       class="form-control"
+                                       type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-8 col-sm-offset-3">
+                                <button type="submit" class="btn btn-primary">保存并生效</button>
+                                <button type="button" class="btn btn-default" onclick="clearPaymentCache()">清理缓存</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:include="include::footer"></div>
+<script type="text/javascript" src="/js/appjs/novel/paymentConfig/edit.js?v=20260612"></script>
+<script type="text/javascript">
+    // 保存后返回列表页面
+    $.validator.setDefaults({
+        submitHandler: function () {
+            update();
+            setTimeout(function() {
+                window.location.href = '/novel/paymentConfig';
+            }, 1000);
+        }
+    });
+</script>
+</body>
+</html>

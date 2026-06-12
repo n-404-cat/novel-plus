@@ -47,6 +47,11 @@ public interface CacheKey {
     String WEBSITE_INFO_KEY = "websiteInfoKey";
 
     /**
+     * 支付配置缓存前缀，后面拼接渠道编码。
+     */
+    String PAYMENT_CONFIG_KEY_PREFIX = "paymentConfigKey:";
+
+    /**
      * 正在运行的爬虫线程存储KEY前缀
      */
     String RUNNING_CRAWL_THREAD_KEY_PREFIX = "runningCrawlTreadDataKeyPrefix";
