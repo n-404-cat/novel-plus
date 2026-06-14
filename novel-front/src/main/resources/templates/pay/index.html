@@ -26,10 +26,19 @@
                 <div class="payCon">
                     <h5>选择充值方式</h5>
                     <ul class="pay_way cf" id="ulPayType">
-                        <li class="on" valp="1"><img class="pay_pic" src="../images/pay_zfb.png" alt="支付宝支付"/></li>
-                        <li valp="2"><img class="pay_pic" src="../images/pay_wx.png" alt="微信支付"/></li>
-
-                    </ul>
+                            <li class="on" valp="1" th:if="${alipayEnabled}"><img class="pay_pic" src="../images/pay_zfb.png" alt="支付宝支付"/></li>
+                            <li valp="2" th:if="${wechatEnabled}"><img class="pay_pic" src="../images/pay_wx.png" alt="微信支付"/></li>
+                            <li valp="3"
+                                th:if="${alipayPersonalEnabled and alipayQrCodeUrl != null and alipayQrCodeUrl != ''}"
+                                th:class="${!alipayEnabled && !wechatEnabled ? 'on' : ''}">
+                                <img class="pay_pic" src="../images/pay_zfb.png" alt="支付宝个人收款"/>
+                            </li>
+                            <li valp="4"
+                                th:if="${wechatPersonalEnabled and wechatQrCodeUrl != null and wechatQrCodeUrl != ''}"
+                                th:class="${!alipayEnabled && !wechatEnabled && !(alipayPersonalEnabled and alipayQrCodeUrl != null and alipayQrCodeUrl != '') ? 'on' : ''}">
+                                <img class="pay_pic" src="../images/pay_wx.png" alt="微信个人收款"/>
+                            </li>
+                        </ul>
                     <h5>选择充值金额</h5>
                     <ul class="pay_way cf" id="ulZFWX">
                         <li vals="10"><strong>10元</strong><span class="pay_mn">1000屋币</span></li>
@@ -124,18 +133,122 @@
     $("#ulZFWX").find("li").click(function () {
 
         var payType = $("#ulPayType").find("li.on").attr("valp");
+        var payAmount = $(this).attr("vals");
 
         if (payType == 2) {
             layer.alert("微信支付暂未开通，敬请期待");
             return;
         }
 
-        $("#pValue").val($(this).attr("vals"));
+        if (payType == 3 || payType == 4) {
+                // 个人收款模式需要在同一屏内展示二维码、凭证上传和审核提交，避免用户误以为弹窗无后续操作。
+                var qrCodeUrl = payType == 3 ? '[[${alipayQrCodeUrl}]]' : '[[${wechatQrCodeUrl}]]';
+                var payName = payType == 3 ? '支付宝' : '微信';
+                var html = '<div style="padding: 14px 18px 16px; height: 100%; display: flex; flex-direction: column; text-align: center; box-sizing: border-box; overflow: hidden;">' +
+                    '<p style="margin-bottom: 10px; font-size: 15px; line-height: 24px; flex: 0 0 auto;">请使用' + payName + '扫描下方二维码支付 <strong style="color: red; font-size: 20px;">' + payAmount + '</strong> 元</p>' +
+                    '<div style="flex: 0 0 auto; margin: 0 auto 10px; padding: 8px; width: 100%; max-width: 290px; border: 1px solid #eee; border-radius: 6px; background: #fff; box-sizing: border-box;">' +
+                    '   <img src="' + qrCodeUrl + '" style="display:block; width: 100%; max-width: 250px; max-height: 320px; object-fit: contain; margin: 0 auto;" />' +
+                    '</div>' +
+                    '<p style="margin-bottom: 10px; color: #666; line-height: 22px; font-size: 13px; flex: 0 0 auto;">支付完成后，请上传支付凭证（截图）以便审核</p>' +
+                '<div style="margin-bottom: 12px; flex: 0 0 auto;">' +
+                '   <input type="file" id="voucherFile" accept="image/*" style="display: none;" onchange="uploadVoucher()" />' +
+                '   <button type="button" class="btn_red" style="padding: 5px 15px; border-radius: 4px; cursor: pointer; border: none; color: #fff;" onclick="$(\'#voucherFile\').click()">上传支付凭证</button>' +
+                '   <input type="hidden" id="voucherUrl" value="" />' +
+                '   <div id="voucherPreview" style="margin-top: 10px; display: none;">' +
+                '       <img src="" style="max-width: 110px; max-height: 110px; border: 1px solid #ccc;" />' +
+                '   </div>' +
+                '</div>' +
+                '<button type="button" class="btn_red" style="width: 100%; padding: 10px; border-radius: 4px; cursor: pointer; border: none; color: #fff; font-size: 16px; flex: 0 0 auto;" onclick="submitAuditPay(' + payAmount + ')">提交审核</button>' +
+                '</div>';
+                
+            layer.open({
+                type: 1,
+                title: payName + '扫码充值',
+                area: ['440px', '690px'],
+                content: html,
+                success: function(layero) {
+                    layero.find('.layui-layer-content').css({
+                        'overflow': 'hidden',
+                        'height': 'calc(100% - 43px)'
+                    });
+                }
+            });
+            return;
+        }
+
+        $("#pValue").val(payAmount);
 
         $("#payform").submit();
 
-
     });
+    
+    function uploadVoucher() {
+        var fileInput = $('#voucherFile')[0];
+        if (fileInput.files.length === 0) return;
+        
+        var formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+        
+        var index = layer.load(1, {shade: [0.1,'#fff']});
+        $.ajax({
+            url: '/file/picUpload',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+            success: function(res) {
+                layer.close(index);
+                if (res.code == 200) {
+                    $('#voucherUrl').val(res.data);
+                    $('#voucherPreview img').attr('src', res.data);
+                    $('#voucherPreview').show();
+                    layer.msg('上传成功');
+                } else {
+                    layer.alert(res.msg || '上传失败');
+                }
+            },
+            error: function() {
+                layer.close(index);
+                layer.alert('网络异常，上传失败');
+            }
+        });
+    }
+    
+    function submitAuditPay(payAmount) {
+        var voucherUrl = $('#voucherUrl').val();
+        if (!voucherUrl) {
+            layer.alert('请先上传支付凭证');
+            return;
+        }
+        
+        var index = layer.load(1, {shade: [0.1,'#fff']});
+        $.ajax({
+            url: '/pay/auditPay',
+            type: 'POST',
+            data: {
+                payAmount: payAmount,
+                voucherUrl: voucherUrl
+            },
+            dataType: 'json',
+            success: function(res) {
+                layer.close(index);
+                if (res.code == 200) {
+                    layer.msg('提交成功，请等待管理员审核', {icon: 1, time: 2000}, function() {
+                        layer.closeAll();
+                        // 刷新页面或跳转到记录页
+                        location.reload();
+                    });
+                } else {
+                    layer.alert(res.msg || '提交失败');
+                }
+            },
+            error: function() {
+                layer.close(index);
+                layer.alert('网络异常，提交失败');
+            }
+        });
+    }
 </script>
 
 
