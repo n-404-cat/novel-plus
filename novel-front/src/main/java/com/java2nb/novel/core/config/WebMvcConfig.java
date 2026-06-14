@@ -1,8 +1,11 @@
 package com.java2nb.novel.core.config;
 
 import com.java2nb.novel.core.converter.DateConverter;
+import com.java2nb.novel.core.utils.Constants;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -10,8 +13,18 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
+
+    @Value("${pic.save.path}")
+    private String picSavePath;
+
     @Override
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(new DateConverter());
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler(Constants.LOCAL_PIC_PREFIX + "**", "/files/**")
+            .addResourceLocations("file:///" + picSavePath);
     }
 }

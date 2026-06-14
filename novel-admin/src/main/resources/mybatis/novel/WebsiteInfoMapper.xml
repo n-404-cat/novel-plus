@@ -4,11 +4,11 @@
 <mapper namespace="com.java2nb.novel.dao.WebsiteInfoDao">
 
 	<select id="get" resultType="com.java2nb.novel.domain.WebsiteInfoDO">
-		select `id`,`name`,`domain`,`keyword`,`description`,`qq`,`logo`,`logo_dark`,`template_name`,`create_time`,`create_user_id`,`update_time`,`update_user_id` from website_info where id = #{value}
+		select `id`,`name`,`domain`,`keyword`,`description`,`qq`,`logo`,`logo_dark`,`template_name`,`novel_sensitive_word_enabled`,`news_sensitive_word_enabled`,`create_time`,`create_user_id`,`update_time`,`update_user_id` from website_info where id = #{value}
 	</select>
 
 	<select id="list" resultType="com.java2nb.novel.domain.WebsiteInfoDO">
-		select `id`,`name`,`domain`,`keyword`,`description`,`qq`,`logo`,`logo_dark`,`template_name`,`create_time`,`create_user_id`,`update_time`,`update_user_id` from website_info
+		select `id`,`name`,`domain`,`keyword`,`description`,`qq`,`logo`,`logo_dark`,`template_name`,`novel_sensitive_word_enabled`,`news_sensitive_word_enabled`,`create_time`,`create_user_id`,`update_time`,`update_user_id` from website_info
         <where>  
 		  		  <if test="id != null and id != ''"> and id = #{id} </if>
 		  		  <if test="name != null and name != ''"> and name = #{name} </if>
@@ -137,6 +137,8 @@
 			<if test="logo != null">`logo` = #{logo}, </if>
 			<if test="logoDark != null">`logo_dark` = #{logoDark}, </if>
 			<if test="templateName != null">`template_name` = #{templateName}, </if>
+			<if test="novelSensitiveWordEnabled != null">`novel_sensitive_word_enabled` = #{novelSensitiveWordEnabled}, </if>
+			<if test="newsSensitiveWordEnabled != null">`news_sensitive_word_enabled` = #{newsSensitiveWordEnabled}, </if>
 			<if test="createTime != null">`create_time` = #{createTime}, </if>
 			<if test="createUserId != null">`create_user_id` = #{createUserId}, </if>
 			<if test="updateTime != null">`update_time` = #{updateTime}, </if>

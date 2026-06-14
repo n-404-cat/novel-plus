@@ -62,6 +62,26 @@ public class WebsiteInfoDO implements Serializable {
 	//所以通过序列化成字符串来解决
 	@JsonSerialize(using = LongToStringSerializer.class)
 			private Long updateUserId;
+	// 小说敏感词替换开启状态
+	private Integer novelSensitiveWordEnabled;
+	// 新闻敏感词替换开启状态
+	private Integer newsSensitiveWordEnabled;
+
+	public Integer getNovelSensitiveWordEnabled() {
+		return novelSensitiveWordEnabled;
+	}
+
+	public void setNovelSensitiveWordEnabled(Integer novelSensitiveWordEnabled) {
+		this.novelSensitiveWordEnabled = novelSensitiveWordEnabled;
+	}
+
+	public Integer getNewsSensitiveWordEnabled() {
+		return newsSensitiveWordEnabled;
+	}
+
+	public void setNewsSensitiveWordEnabled(Integer newsSensitiveWordEnabled) {
+		this.newsSensitiveWordEnabled = newsSensitiveWordEnabled;
+	}
 
 	/**
 	 * 设置：主键

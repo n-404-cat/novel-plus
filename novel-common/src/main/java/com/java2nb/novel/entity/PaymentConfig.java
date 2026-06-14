@@ -36,7 +36,26 @@ public class PaymentConfig {
 
     private Integer enabled;
 
+    /**
+     * 原生微信支付启停状态
+     */
+    private Integer wechatEnabled;
+
+    /**
+     * 个人支付宝启停状态
+     */
+    private Integer alipayPersonalEnabled;
+
+    /**
+     * 个人微信启停状态
+     */
+    private Integer wechatPersonalEnabled;
+
     private String remark;
+
+    private String alipayQrCodeUrl;
+
+    private String wechatQrCodeUrl;
 
     private Date createTime;
 

@@ -50,6 +50,12 @@ public final class WebsiteInfoDynamicSqlSupport {
     public static final SqlColumn<Long> updateUserId = websiteInfo.updateUserId;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public static final SqlColumn<Byte> novelSensitiveWordEnabled = websiteInfo.novelSensitiveWordEnabled;
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public static final SqlColumn<Byte> newsSensitiveWordEnabled = websiteInfo.newsSensitiveWordEnabled;
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public static final class WebsiteInfo extends SqlTable {
         public final SqlColumn<Long> id = column("id", JDBCType.BIGINT);
 
@@ -68,6 +74,10 @@ public final class WebsiteInfoDynamicSqlSupport {
         public final SqlColumn<String> logoDark = column("logo_dark", JDBCType.VARCHAR);
 
         public final SqlColumn<String> templateName = column("template_name", JDBCType.VARCHAR);
+
+        public final SqlColumn<Byte> novelSensitiveWordEnabled = column("novel_sensitive_word_enabled", JDBCType.TINYINT);
+
+        public final SqlColumn<Byte> newsSensitiveWordEnabled = column("news_sensitive_word_enabled", JDBCType.TINYINT);
 
         public final SqlColumn<Date> createTime = column("create_time", JDBCType.TIMESTAMP);
 

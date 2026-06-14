@@ -110,7 +110,7 @@ window.clearWebsiteCache = function () {
         },
         success: function (data) {
             if (data && data.code == 0) {
-                layer.msg(data.msg || "缓存已清理");
+                layer.msg(data.msg || "网站信息缓存已清理");
                 return;
             }
             if (data && data.msg) {
@@ -120,4 +120,9 @@ window.clearWebsiteCache = function () {
             layer.alert("请求已返回，但响应不是预期的 JSON，请检查是否已登录或是否具备权限。");
         }
     });
+};
+
+window.clearImg = function(relName) {
+    $("#picImage" + relName).attr("src", "/img/webuploader.png");
+    $("#" + relName).val("");
 };

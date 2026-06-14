@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content ">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>小说信息</h5>
+                </div>
+                <div class="ibox-content">
+                    <form class="form-horizontal m-t" id="auditForm">
+                        <input id="id" name="id" th:value="${book.id}" type="hidden">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">小说封面：</label>
+                            <div class="col-sm-8">
+                                <img th:src="${book.picUrl}" style="width:100px; height:130px;" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">小说名：</label>
+                            <div style="padding-top:8px" class="col-sm-8" th:text="${book.bookName}"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">作者：</label>
+                            <div style="padding-top:8px" class="col-sm-8" th:text="${book.authorName}"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">分类：</label>
+                            <div style="padding-top:8px" class="col-sm-8" th:text="${book.catName}"></div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">简介：</label>
+                            <div style="padding-top:8px" class="col-sm-8" th:utext="${book.bookDesc}"></div>
+                        </div>
+                        <hr>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">审核结果：</label>
+                            <div class="col-sm-8">
+                                <label class="radio-inline"> <input type="radio" name="status" value="1" checked="checked"> 通过并上架</label>
+                                <label class="radio-inline"> <input type="radio" name="status" value="2"> 驳回</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">审核意见：</label>
+                            <div class="col-sm-8">
+                                <textarea name="auditRemark" class="form-control" rows="3" placeholder="请输入审核意见（驳回必填）"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-8 col-sm-offset-3">
+                                <button type="button" class="btn btn-primary" onclick="submitAudit()">提交审核</button>
+                                <button type="button" class="btn btn-default" onclick="parent.layer.closeAll()">关闭</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-sm-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>章节正文预览</h5>
+                </div>
+                <div class="ibox-content" style="height: 600px; overflow-y: auto;">
+                    <div class="row">
+                        <div class="col-sm-4" style="border-right: 1px solid #eee;">
+                            <ul class="list-group" id="chapterList" style="max-height: 550px; overflow-y: auto; cursor: pointer;">
+                                <!-- 动态加载章节列表 -->
+                            </ul>
+                        </div>
+                        <div class="col-sm-8">
+                            <h4 id="chapterTitle">点击左侧章节查看正文</h4>
+                            <div id="chapterContent" style="margin-top: 15px; font-size: 14px; line-height: 1.6; color: #333; max-height: 500px; overflow-y: auto;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:include="include::footer"></div>
+<script type="text/javascript">
+    $(function() {
+        loadChapters();
+    });
+    
+    function loadChapters() {
+        var bookId = $("#id").val();
+        $.get("/novel/book/indexList/" + bookId, function(res) {
+            if (res.code === 0 && res.data) {
+                var html = '';
+                for (var i = 0; i < res.data.length; i++) {
+                    var chapter = res.data[i];
+                    html += '<li class="list-group-item" onclick="loadContent(' + chapter.id + ', \'' + chapter.indexName + '\')">' + chapter.indexName + '</li>';
+                }
+                $("#chapterList").html(html);
+                if(res.data.length > 0) {
+                    loadContent(res.data[0].id, res.data[0].indexName);
+                }
+            }
+        });
+    }
+    
+    function loadContent(indexId, indexName) {
+        $("#chapterTitle").text(indexName);
+        $("#chapterContent").html("正在加载正文...");
+        $.get("/novel/book/content/" + indexId, function(res) {
+            if (res.code === 0) {
+                var text = res.data || "（该章节暂无内容）";
+                text = text.replace(/\n/g, '<br/>');
+                $("#chapterContent").html(text);
+            } else {
+                $("#chapterContent").html("<span style='color:red;'>加载失败</span>");
+            }
+        });
+    }
+    
+    function submitAudit() {
+        var status = $("input[name='status']:checked").val();
+        var auditRemark = $("textarea[name='auditRemark']").val();
+        if (status === '2' && !auditRemark) {
+            layer.msg("请填写驳回原因");
+            return;
+        }
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: "/novel/book/auditSubmit",
+            data: $('#auditForm').serialize(),
+            async: false,
+            error: function(request) {
+                parent.layer.alert("网络异常");
+            },
+            success: function(data) {
+                if (data.code === 0) {
+                    parent.layer.msg("操作成功");
+                    parent.reLoad();
+                    var index = parent.layer.getFrameIndex(window.name);
+                    parent.layer.close(index);
+                } else {
+                    parent.layer.alert(data.msg);
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

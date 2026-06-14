@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="gray-bg">
+	<div class="wrapper wrapper-content ">
+		<div class="col-sm-12">
+			<div class="ibox">
+				<div class="ibox-body">
+					<div class="fixed-table-toolbar">
+						<div class="columns pull-left">
+						</div>
+						<div class="columns pull-right">
+							<button class="btn btn-success" onclick="reLoad()">查询</button>
+						</div>
+						<div class="columns pull-right col-md-2 nopadding">
+							<input id="searchName" type="text" class="form-control"
+								placeholder="商户订单号">
+						</div>
+					</div>
+					<table id="exampleTable" data-mobile-responsive="true">
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--shiro控制bootstraptable行内按钮看见性 -->
+		<div>
+			<script type="text/javascript">
+				var s_audit_h = 'hidden';
+			</script>
+		</div>
+		<div shiro:hasPermission="novel:orderPayAudit:audit">
+			<script type="text/javascript">
+				s_audit_h = '';
+			</script>
+		</div>
+	<div th:include="include :: footer"></div>
+	<script type="text/javascript" src="/js/appjs/novel/orderPayAudit/orderPayAudit.js"></script>
+</body>
+</html>

@@ -11,11 +11,8 @@ $(function () {
 
         if($(this).attr("valp")==2){
             layer.alert("微信支付暂未开通，敬请期待");
+            return ;
         }
-
-        return ;
-
-
 
         $($(this).parent()).children().each(function () {
             $(this).removeClass("on");
@@ -23,7 +20,7 @@ $(function () {
         $(this).addClass("on");
 
         var type = $(this).attr("valp");
-        if (type == "3") {
+        if (type == "4") { // originally 3 was paypal, let's change paypal to 4, and 3 is our personal pay
             $("#ulPayPal").show();
             $("#ulPayPalXJ").show();
             $("#ulZFWX").hide();

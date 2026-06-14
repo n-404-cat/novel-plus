@@ -37,15 +37,10 @@ public class PaymentConfigServiceImpl implements PaymentConfigService {
     @PostConstruct
     public void initPaymentConfig() {
         PaymentConfig dbConfig = paymentConfigMapper.selectByChannelCode(CHANNEL_CODE_ALIPAY);
-        PaymentConfig localConfig = buildLocalPaymentConfig();
         if (dbConfig == null) {
-            paymentConfigMapper.insert(localConfig);
-            cacheService.del(CacheKey.PAYMENT_CONFIG_KEY_PREFIX + CHANNEL_CODE_ALIPAY);
-            return;
-        }
-        if (shouldBootstrapFromLocal(dbConfig, localConfig)) {
-            localConfig.setId(dbConfig.getId());
-            paymentConfigMapper.updateByChannelCode(localConfig);
+            // 前台只在数据库中完全不存在配置时初始化一份默认记录，
+            // 避免启动时把后台已经维护好的支付开关、二维码和文案再次覆盖回去。
+            paymentConfigMapper.insert(buildLocalPaymentConfig());
             cacheService.del(CacheKey.PAYMENT_CONFIG_KEY_PREFIX + CHANNEL_CODE_ALIPAY);
         }
     }
@@ -89,7 +84,12 @@ public class PaymentConfigServiceImpl implements PaymentConfigService {
         effectiveConfig.setSignType(firstNonBlank(getValue(dbConfig, ValueGetter.SIGN_TYPE), alipayProperties.getSignType()));
         effectiveConfig.setCharset(firstNonBlank(getValue(dbConfig, ValueGetter.CHARSET), alipayProperties.getCharset()));
         effectiveConfig.setPayEnvironment(firstNonBlank(getValue(dbConfig, ValueGetter.PAY_ENVIRONMENT), "sandbox"));
+        effectiveConfig.setAlipayQrCodeUrl(dbConfig == null ? null : dbConfig.getAlipayQrCodeUrl());
+        effectiveConfig.setWechatQrCodeUrl(dbConfig == null ? null : dbConfig.getWechatQrCodeUrl());
         effectiveConfig.setEnabled(dbConfig == null || dbConfig.getEnabled() == null ? 1 : dbConfig.getEnabled());
+        effectiveConfig.setWechatEnabled(dbConfig == null || dbConfig.getWechatEnabled() == null ? 0 : dbConfig.getWechatEnabled());
+        effectiveConfig.setAlipayPersonalEnabled(dbConfig == null || dbConfig.getAlipayPersonalEnabled() == null ? 0 : dbConfig.getAlipayPersonalEnabled());
+        effectiveConfig.setWechatPersonalEnabled(dbConfig == null || dbConfig.getWechatPersonalEnabled() == null ? 0 : dbConfig.getWechatPersonalEnabled());
         effectiveConfig.setRemark(dbConfig == null ? null : dbConfig.getRemark());
         return effectiveConfig;
     }
@@ -149,6 +149,9 @@ public class PaymentConfigServiceImpl implements PaymentConfigService {
         config.setCharset(alipayProperties.getCharset());
         config.setPayEnvironment("sandbox");
         config.setEnabled(1);
+        config.setWechatEnabled(0);
+        config.setAlipayPersonalEnabled(0);
+        config.setWechatPersonalEnabled(0);
         config.setRemark("init-from-local");
         config.setCreateTime(now);
         config.setCreateUserId(0L);
@@ -156,22 +159,6 @@ public class PaymentConfigServiceImpl implements PaymentConfigService {
         config.setUpdateUserId(0L);
         return config;
     }
-
-    private boolean shouldBootstrapFromLocal(PaymentConfig dbConfig, PaymentConfig localConfig) {
-        if (dbConfig == null) {
-            return true;
-        }
-        if (localConfig == null) {
-            return false;
-        }
-        return isKnownPlaceholder(dbConfig.getAppId())
-            || isKnownPlaceholder(dbConfig.getPrivateKey())
-            || isKnownPlaceholder(dbConfig.getPublicKey())
-            || isKnownPlaceholder(dbConfig.getNotifyUrl())
-            || isKnownPlaceholder(dbConfig.getReturnUrl())
-            || isKnownPlaceholder(dbConfig.getGatewayUrl());
-    }
-
     private String getValue(PaymentConfig dbConfig, ValueGetter getter) {
         if (dbConfig == null) {
             return null;

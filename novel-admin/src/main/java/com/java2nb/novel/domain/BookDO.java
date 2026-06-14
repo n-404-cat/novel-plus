@@ -79,6 +79,8 @@ public class BookDO implements Serializable {
     //创建时间
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
+    //审核意见
+    private String auditRemark;
     //爬虫源站ID
     private Integer crawlSourceId;
     //抓取的源站小说ID
@@ -395,6 +397,14 @@ public class BookDO implements Serializable {
      */
     public Date getCreateTime() {
         return createTime;
+    }
+
+    public String getAuditRemark() {
+        return auditRemark;
+    }
+
+    public void setAuditRemark(String auditRemark) {
+        this.auditRemark = auditRemark;
     }
 
     /**

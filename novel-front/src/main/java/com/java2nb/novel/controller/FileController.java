@@ -59,6 +59,13 @@ public class FileController {
             60 * 5);
     }
 
+    @GetMapping("testPath")
+    @ResponseBody
+    public RestResult<String> testPath() {
+        File f = new File(picSavePath);
+        return RestResult.ok("picSavePath: [" + picSavePath + "], abs: " + f.getAbsolutePath() + ", exists: " + f.exists() + ", user.dir: " + System.getProperty("user.dir"));
+    }
+
     /**
      * 图片上传
      *
@@ -86,19 +93,19 @@ public class FileController {
         assert oriName != null;
         String saveFileName = UUIDUtil.getUUID32() + oriName.substring(oriName.lastIndexOf("."));
         File saveFile = new File(picSavePath + savePath, saveFileName);
+        log.info("picSavePath: {}, savePath: {}, fullPath: {}", picSavePath, savePath, saveFile.getAbsolutePath());
         if (!saveFile.getParentFile().exists()) {
             boolean isSuccess = saveFile.getParentFile().mkdirs();
             if (!isSuccess) {
                 throw new BusinessException(ResponseStatus.FILE_DIR_MAKE_FAIL);
             }
         }
-        file.transferTo(saveFile);
-        if (!FileUtil.isImage(saveFile)) {
+        file.transferTo(saveFile.getAbsoluteFile());
+        if (!FileUtil.isImage(saveFile.getAbsoluteFile())) {
             //上传的文件不是图片
-            saveFile.delete();
+            saveFile.getAbsoluteFile().delete();
             throw new BusinessException(ResponseStatus.FILE_NOT_IMAGE);
         }
-        ;
         return RestResult.ok(savePath + "/" + saveFileName);
 
     }

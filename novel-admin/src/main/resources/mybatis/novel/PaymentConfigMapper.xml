@@ -17,7 +17,12 @@
         <result column="charset" property="charset"/>
         <result column="pay_environment" property="payEnvironment"/>
         <result column="enabled" property="enabled"/>
+        <result column="wechat_enabled" property="wechatEnabled"/>
+        <result column="alipay_personal_enabled" property="alipayPersonalEnabled"/>
+        <result column="wechat_personal_enabled" property="wechatPersonalEnabled"/>
         <result column="remark" property="remark"/>
+        <result column="alipay_qr_code_url" property="alipayQrCodeUrl"/>
+        <result column="wechat_qr_code_url" property="wechatQrCodeUrl"/>
         <result column="create_time" property="createTime"/>
         <result column="create_user_id" property="createUserId"/>
         <result column="update_time" property="updateTime"/>
@@ -38,7 +43,12 @@
                charset,
                pay_environment,
                enabled,
+               wechat_enabled,
+               alipay_personal_enabled,
+               wechat_personal_enabled,
                remark,
+               alipay_qr_code_url,
+               wechat_qr_code_url,
                create_time,
                create_user_id,
                update_time,
@@ -61,7 +71,12 @@
                charset,
                pay_environment,
                enabled,
+               wechat_enabled,
+               alipay_personal_enabled,
+               wechat_personal_enabled,
                remark,
+               alipay_qr_code_url,
+               wechat_qr_code_url,
                create_time,
                create_user_id,
                update_time,
@@ -86,7 +101,12 @@
             charset,
             pay_environment,
             enabled,
+            wechat_enabled,
+            alipay_personal_enabled,
+            wechat_personal_enabled,
             remark,
+            alipay_qr_code_url,
+            wechat_qr_code_url,
             create_time,
             create_user_id,
             update_time,
@@ -106,7 +126,12 @@
             #{charset},
             #{payEnvironment},
             #{enabled},
+            #{wechatEnabled},
+            #{alipayPersonalEnabled},
+            #{wechatPersonalEnabled},
             #{remark},
+            #{alipayQrCodeUrl},
+            #{wechatQrCodeUrl},
             #{createTime},
             #{createUserId},
             #{updateTime},
@@ -128,7 +153,12 @@
             <if test="charset != null">charset = #{charset},</if>
             <if test="payEnvironment != null">pay_environment = #{payEnvironment},</if>
             <if test="enabled != null">enabled = #{enabled},</if>
+            <if test="wechatEnabled != null">wechat_enabled = #{wechatEnabled},</if>
+            <if test="alipayPersonalEnabled != null">alipay_personal_enabled = #{alipayPersonalEnabled},</if>
+            <if test="wechatPersonalEnabled != null">wechat_personal_enabled = #{wechatPersonalEnabled},</if>
             <if test="remark != null">remark = #{remark},</if>
+            <if test="alipayQrCodeUrl != null">alipay_qr_code_url = #{alipayQrCodeUrl},</if>
+            <if test="wechatQrCodeUrl != null">wechat_qr_code_url = #{wechatQrCodeUrl},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="updateUserId != null">update_user_id = #{updateUserId},</if>
         </set>

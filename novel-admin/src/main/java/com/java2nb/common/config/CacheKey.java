@@ -79,4 +79,6 @@ public interface CacheKey {
      * 测试爬虫规则缓存
      */
     String BOOK_TEST_PARSE = "testParse";
+
+    String SENSITIVE_WORD_KEY = "sensitiveWordKey";
 }

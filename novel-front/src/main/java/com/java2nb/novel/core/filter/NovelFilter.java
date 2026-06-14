@@ -49,11 +49,23 @@ public class NovelFilter implements Filter {
         String requestUri = req.getRequestURI();
 
         //本地图片访问处理
-        if (requestUri.contains(Constants.LOCAL_PIC_PREFIX)) {
+        if (requestUri.contains(Constants.LOCAL_PIC_PREFIX) || requestUri.startsWith("/files/")) {
             //缓存10天
             resp.setDateHeader("expires", System.currentTimeMillis()+60*60*24*10*1000);
+            String path;
+            if (requestUri.contains(Constants.LOCAL_PIC_PREFIX)) {
+                path = picSavePath + requestUri;
+            } else {
+                path = picSavePath + requestUri.replaceFirst("/files/", "");
+            }
+            File file = new File(path);
+            if (!file.exists()) {
+                System.out.println("File not found: " + file.getAbsolutePath());
+                filterChain.doFilter(servletRequest, servletResponse);
+                return;
+            }
             OutputStream out = resp.getOutputStream();
-            InputStream input = new FileInputStream(picSavePath + requestUri);
+            InputStream input = new FileInputStream(file);
             byte[] b = new byte[4096];
             for (int n; (n = input.read(b)) != -1; ) {
                 out.write(b, 0, n);

@@ -35,7 +35,7 @@ import org.mybatis.dynamic.sql.util.mybatis3.MyBatis3Utils;
 @Mapper
 public interface WebsiteInfoMapper {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
-    BasicColumn[] selectList = BasicColumn.columnList(id, name, domain, keyword, description, qq, logo, logoDark, templateName, createTime, createUserId, updateTime, updateUserId);
+    BasicColumn[] selectList = BasicColumn.columnList(id, name, domain, keyword, description, qq, logo, logoDark, templateName, novelSensitiveWordEnabled, newsSensitiveWordEnabled, createTime, createUserId, updateTime, updateUserId);
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     @SelectProvider(type=SqlProviderAdapter.class, method="select")
@@ -70,6 +70,8 @@ public interface WebsiteInfoMapper {
         @Result(column="logo", property="logo", jdbcType=JdbcType.VARCHAR),
         @Result(column="logo_dark", property="logoDark", jdbcType=JdbcType.VARCHAR),
         @Result(column="template_name", property="templateName", jdbcType=JdbcType.VARCHAR),
+        @Result(column="novel_sensitive_word_enabled", property="novelSensitiveWordEnabled", jdbcType=JdbcType.TINYINT),
+        @Result(column="news_sensitive_word_enabled", property="newsSensitiveWordEnabled", jdbcType=JdbcType.TINYINT),
         @Result(column="create_time", property="createTime", jdbcType=JdbcType.TIMESTAMP),
         @Result(column="create_user_id", property="createUserId", jdbcType=JdbcType.BIGINT),
         @Result(column="update_time", property="updateTime", jdbcType=JdbcType.TIMESTAMP),
@@ -110,6 +112,8 @@ public interface WebsiteInfoMapper {
             .map(logo).toProperty("logo")
             .map(logoDark).toProperty("logoDark")
             .map(templateName).toProperty("templateName")
+            .map(novelSensitiveWordEnabled).toProperty("novelSensitiveWordEnabled")
+            .map(newsSensitiveWordEnabled).toProperty("newsSensitiveWordEnabled")
             .map(createTime).toProperty("createTime")
             .map(createUserId).toProperty("createUserId")
             .map(updateTime).toProperty("updateTime")
@@ -129,6 +133,8 @@ public interface WebsiteInfoMapper {
             .map(logo).toProperty("logo")
             .map(logoDark).toProperty("logoDark")
             .map(templateName).toProperty("templateName")
+            .map(novelSensitiveWordEnabled).toProperty("novelSensitiveWordEnabled")
+            .map(newsSensitiveWordEnabled).toProperty("newsSensitiveWordEnabled")
             .map(createTime).toProperty("createTime")
             .map(createUserId).toProperty("createUserId")
             .map(updateTime).toProperty("updateTime")
@@ -148,6 +154,8 @@ public interface WebsiteInfoMapper {
             .map(logo).toPropertyWhenPresent("logo", record::getLogo)
             .map(logoDark).toPropertyWhenPresent("logoDark", record::getLogoDark)
             .map(templateName).toPropertyWhenPresent("templateName", record::getTemplateName)
+            .map(novelSensitiveWordEnabled).toPropertyWhenPresent("novelSensitiveWordEnabled", record::getNovelSensitiveWordEnabled)
+            .map(newsSensitiveWordEnabled).toPropertyWhenPresent("newsSensitiveWordEnabled", record::getNewsSensitiveWordEnabled)
             .map(createTime).toPropertyWhenPresent("createTime", record::getCreateTime)
             .map(createUserId).toPropertyWhenPresent("createUserId", record::getCreateUserId)
             .map(updateTime).toPropertyWhenPresent("updateTime", record::getUpdateTime)
@@ -193,6 +201,8 @@ public interface WebsiteInfoMapper {
                 .set(logo).equalTo(record::getLogo)
                 .set(logoDark).equalTo(record::getLogoDark)
                 .set(templateName).equalTo(record::getTemplateName)
+                .set(novelSensitiveWordEnabled).equalTo(record::getNovelSensitiveWordEnabled)
+                .set(newsSensitiveWordEnabled).equalTo(record::getNewsSensitiveWordEnabled)
                 .set(createTime).equalTo(record::getCreateTime)
                 .set(createUserId).equalTo(record::getCreateUserId)
                 .set(updateTime).equalTo(record::getUpdateTime)
@@ -210,6 +220,8 @@ public interface WebsiteInfoMapper {
                 .set(logo).equalToWhenPresent(record::getLogo)
                 .set(logoDark).equalToWhenPresent(record::getLogoDark)
                 .set(templateName).equalToWhenPresent(record::getTemplateName)
+                .set(novelSensitiveWordEnabled).equalToWhenPresent(record::getNovelSensitiveWordEnabled)
+                .set(newsSensitiveWordEnabled).equalToWhenPresent(record::getNewsSensitiveWordEnabled)
                 .set(createTime).equalToWhenPresent(record::getCreateTime)
                 .set(createUserId).equalToWhenPresent(record::getCreateUserId)
                 .set(updateTime).equalToWhenPresent(record::getUpdateTime)
@@ -227,6 +239,8 @@ public interface WebsiteInfoMapper {
             .set(logo).equalTo(record::getLogo)
             .set(logoDark).equalTo(record::getLogoDark)
             .set(templateName).equalTo(record::getTemplateName)
+            .set(novelSensitiveWordEnabled).equalTo(record::getNovelSensitiveWordEnabled)
+            .set(newsSensitiveWordEnabled).equalTo(record::getNewsSensitiveWordEnabled)
             .set(createTime).equalTo(record::getCreateTime)
             .set(createUserId).equalTo(record::getCreateUserId)
             .set(updateTime).equalTo(record::getUpdateTime)
@@ -246,6 +260,8 @@ public interface WebsiteInfoMapper {
             .set(logo).equalToWhenPresent(record::getLogo)
             .set(logoDark).equalToWhenPresent(record::getLogoDark)
             .set(templateName).equalToWhenPresent(record::getTemplateName)
+            .set(novelSensitiveWordEnabled).equalToWhenPresent(record::getNovelSensitiveWordEnabled)
+            .set(newsSensitiveWordEnabled).equalToWhenPresent(record::getNewsSensitiveWordEnabled)
             .set(createTime).equalToWhenPresent(record::getCreateTime)
             .set(createUserId).equalToWhenPresent(record::getCreateUserId)
             .set(updateTime).equalToWhenPresent(record::getUpdateTime)

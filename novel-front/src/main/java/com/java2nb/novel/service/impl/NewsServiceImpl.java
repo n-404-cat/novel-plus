@@ -5,6 +5,7 @@ import io.github.xxyopen.model.page.PageBean;
 import io.github.xxyopen.web.util.BeanUtil;
 import com.java2nb.novel.mapper.FrontNewsMapper;
 import com.java2nb.novel.service.NewsService;
+import com.java2nb.novel.service.SensitiveWordFilterService;
 import com.java2nb.novel.core.cache.CacheKey;
 import com.java2nb.novel.core.cache.CacheService;
 import com.java2nb.novel.entity.News;
@@ -33,6 +34,7 @@ public class NewsServiceImpl implements NewsService {
 
     private final CacheService cacheService;
 
+    private final SensitiveWordFilterService sensitiveWordFilterService;
 
     @Override
     public List<News> listIndexNews() {
@@ -57,8 +59,11 @@ public class NewsServiceImpl implements NewsService {
             .where(id, isEqualTo(newsId))
             .build()
             .render(RenderingStrategies.MYBATIS3);
-        return newsMapper.selectMany(selectStatement).get(0);
-
+        News n = newsMapper.selectMany(selectStatement).get(0);
+        if (n != null && n.getContent() != null) {
+            n.setContent(sensitiveWordFilterService.filterNewsContent(n.getContent()));
+        }
+        return n;
     }
 
     @Override

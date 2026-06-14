@@ -15,6 +15,7 @@ import com.java2nb.novel.service.AuthorService;
 import com.java2nb.novel.service.BookService;
 import com.java2nb.novel.service.FileService;
 import com.java2nb.novel.service.LikeService;
+import com.java2nb.novel.service.SensitiveWordFilterService;
 import com.java2nb.novel.vo.*;
 import io.github.xxyopen.model.page.PageBean;
 import io.github.xxyopen.model.page.builder.pagehelper.PageBuilder;
@@ -306,6 +307,8 @@ public class BookServiceImpl implements BookService {
         }
     }
 
+    private final SensitiveWordFilterService sensitiveWordFilterService;
+
     @Override
     public BookContent queryBookContent(Long bookIndexId) {
         SelectStatementProvider selectStatement = select(BookContentDynamicSqlSupport.id,
@@ -315,7 +318,11 @@ public class BookServiceImpl implements BookService {
             .limit(1)
             .build()
             .render(RenderingStrategies.MYBATIS3);
-        return bookContentMapper.selectMany(selectStatement).get(0);
+        BookContent bookContent = bookContentMapper.selectMany(selectStatement).get(0);
+        if (bookContent != null && bookContent.getContent() != null) {
+            bookContent.setContent(sensitiveWordFilterService.filterNovelContent(bookContent.getContent()));
+        }
+        return bookContent;
     }
 
     @Override

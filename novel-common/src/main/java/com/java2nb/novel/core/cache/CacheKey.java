@@ -78,4 +78,6 @@ public interface CacheKey {
      * AI生成图片
      * */
     String AI_GEN_PIC = "aiGenPic";
+
+    String SENSITIVE_WORD_KEY = "sensitiveWordKey";
 }

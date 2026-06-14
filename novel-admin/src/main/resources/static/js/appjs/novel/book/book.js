@@ -134,6 +134,20 @@ function load() {
                     },
 
                     {
+                        field: 'status',
+                        title: '审核状态',
+                        formatter: function (value, row, index) {
+                            if (value === 0) {
+                                return '<span class="label label-warning">待审核</span>';
+                            } else if (value === 1) {
+                                return '<span class="label label-primary">已发布</span>';
+                            } else if (value === 2) {
+                                return '<span class="label label-danger">已驳回</span>';
+                            }
+                            return '未知';
+                        }
+                    },
+                    {
                         field: 'createTime',
                         title: '入库时间'
                     },
@@ -143,14 +157,17 @@ function load() {
                         field: 'id',
                         align: 'center',
                         formatter: function (value, row, index) {
+                            var a = '<a class="btn btn-success btn-sm" href="#" title="审核" onclick="audit(\''
+                                + row.id
+                                + '\')"><i class="fa fa-check-square-o"></i> 审核</a><br><br> ';
                             // 增加下载按钮
-                            var d = '<a class="btn btn-primary btn-sm" href="#" mce_href="#" title="下载TXT" onclick="downloadBook(\''
+                            var d = '<a class="btn btn-primary btn-sm" href="#" title="下载TXT" onclick="downloadBook(\''
                                 + row.id
-                                + '\',\'' + row.bookName + '\')"><i class="fa fa-cloud-download"></i></a><br><br> ';
-                            var r = '<a class="btn btn-warning btn-sm ' + s_remove_h + '" href="#" title="删除"  mce_href="#" onclick="remove(\''
+                                + '\',\'' + row.bookName + '\')"><i class="fa fa-cloud-download"></i> 下载</a><br><br> ';
+                            var r = '<a class="btn btn-warning btn-sm ' + s_remove_h + '" href="#" title="删除" onclick="remove(\''
                                 + row.id
-                                + '\')"><i class="fa fa-remove"></i></a> ';
-                            return d + r;
+                                + '\')"><i class="fa fa-remove"></i> 删除</a> ';
+                            return a + d + r;
                         }
                     }
 
@@ -170,6 +187,17 @@ function add() {
         shadeClose: false, // 点击遮罩关闭层
         area: ['800px', '520px'],
         content: prefix + '/add' // iframe的url
+    });
+}
+
+function audit(id) {
+    layer.open({
+        type: 2,
+        title: '审核与发布工作台',
+        maxmin: true,
+        shadeClose: false,
+        area: ['1000px', '800px'],
+        content: prefix + '/audit/' + id
     });
 }
 

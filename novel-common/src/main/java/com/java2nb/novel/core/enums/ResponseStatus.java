@@ -57,6 +57,13 @@ public enum ResponseStatus implements IResultCode {
     FILE_SIZE_LIMIT(10003,"文件大小超出限制"),
 
     /**
+     * 支付相关错误
+     */
+    PAY_AMOUNT_INVALID(11001, "支付金额无效"),
+    PAY_VOUCHER_REQUIRED(11002, "请上传支付凭证"),
+    PAY_SUBMIT_FAIL(11003, "提交失败，请稍后再试"),
+
+    /**
      * 其他通用错误
      * */
     PASSWORD_ERROR(88001,"密码错误！");

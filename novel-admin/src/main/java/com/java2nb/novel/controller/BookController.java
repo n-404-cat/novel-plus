@@ -110,7 +110,52 @@ public class BookController {
         return "novel/book/edit";
     }
 
-    @ApiOperation(value = "查看小说表页面", notes = "查看小说表页面")
+    @ApiOperation(value = "审核小说页面", notes = "审核小说页面")
+    @GetMapping("/audit/{id}")
+    @RequiresPermissions("novel:book:edit")
+    String audit(@PathVariable("id") Long id, Model model) {
+        BookDO book = bookService.get(id);
+        model.addAttribute("book", book);
+        return "novel/book/audit";
+    }
+
+    @ApiOperation(value = "获取小说章节列表", notes = "获取小说章节列表")
+    @ResponseBody
+    @GetMapping("/indexList/{bookId}")
+    @RequiresPermissions("novel:book:edit")
+    public R indexList(@PathVariable("bookId") Long bookId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("bookId", bookId);
+        params.put("sort", "index_num");
+        params.put("order", "asc");
+        params.put("limit", 9999);
+        params.put("offset", 0);
+        List<BookIndexDO> list = bookIndexService.list(params);
+        return R.ok().put("data", list);
+    }
+
+    @ApiOperation(value = "获取章节正文", notes = "获取章节正文")
+    @ResponseBody
+    @GetMapping("/content/{indexId}")
+    @RequiresPermissions("novel:book:edit")
+    public R content(@PathVariable("indexId") Long indexId) {
+        BookContentDO content = bookContentService.get(indexId);
+        return R.ok().put("data", content != null ? content.getContent() : "");
+    }
+
+    @ApiOperation(value = "提交审核", notes = "提交审核")
+    @ResponseBody
+    @PostMapping("/auditSubmit")
+    @RequiresPermissions("novel:book:edit")
+    public R auditSubmit(Long id, Integer status, String auditRemark) {
+        BookDO book = new BookDO();
+        book.setId(id);
+        book.setStatus(status); // 1-上架, 2-驳回
+        book.setAuditRemark(auditRemark);
+        book.setUpdateTime(new java.util.Date());
+        bookService.update(book);
+        return R.ok();
+    }
     @GetMapping("/detail/{id}")
     @RequiresPermissions("novel:book:detail")
     String detail(@PathVariable("id") Long id, Model model) {

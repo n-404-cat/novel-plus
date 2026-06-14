@@ -24,6 +24,7 @@
                `last_index_update_time`,
                `is_vip`,
                `status`,
+               `audit_remark`,
                `update_time`,
                `create_time`,
                `crawl_source_id`,
@@ -36,7 +37,7 @@
 
     <select id="list" resultType="com.java2nb.novel.domain.BookDO">
         select
-        `id`,`work_direction`,`cat_id`,`cat_name`,`pic_url`,`book_name`,`author_id`,`author_name`,`book_desc`,`score`,`book_status`,`visit_count`,`word_count`,`comment_count`,`yesterday_buy`,`last_index_id`,`last_index_name`,`last_index_update_time`,`is_vip`,`status`,`update_time`,`create_time`,`crawl_source_id`,`crawl_book_id`,`crawl_last_time`,`crawl_is_stop`
+        `id`,`work_direction`,`cat_id`,`cat_name`,`pic_url`,`book_name`,`author_id`,`author_name`,`book_desc`,`score`,`book_status`,`visit_count`,`word_count`,`comment_count`,`yesterday_buy`,`last_index_id`,`last_index_name`,`last_index_update_time`,`is_vip`,`status`,`audit_remark`,`update_time`,`create_time`,`crawl_source_id`,`crawl_book_id`,`crawl_last_time`,`crawl_is_stop`
         from book
         <where>
             <if test="id != null and id != ''">and id = #{id}</if>
@@ -254,6 +255,7 @@
             <if test="lastIndexUpdateTime != null">`last_index_update_time` = #{lastIndexUpdateTime},</if>
             <if test="isVip != null">`is_vip` = #{isVip},</if>
             <if test="status != null">`status` = #{status},</if>
+            <if test="auditRemark != null">`audit_remark` = #{auditRemark},</if>
             <if test="updateTime != null">`update_time` = #{updateTime},</if>
             <if test="createTime != null">`create_time` = #{createTime},</if>
             <if test="crawlSourceId != null">`crawl_source_id` = #{crawlSourceId},</if>
@@ -287,7 +289,7 @@
     </select>
     <select id="batchGet" resultType="com.java2nb.novel.domain.BookDO">
         select
-        `id`,`work_direction`,`cat_id`,`cat_name`,`pic_url`,`book_name`,`author_id`,`author_name`,`book_desc`,`score`,`book_status`,`visit_count`,`word_count`,`comment_count`,`yesterday_buy`,`last_index_id`,`last_index_name`,`last_index_update_time`,`is_vip`,`status`,`update_time`,`create_time`,`crawl_source_id`,`crawl_book_id`,`crawl_last_time`,`crawl_is_stop`
+        `id`,`work_direction`,`cat_id`,`cat_name`,`pic_url`,`book_name`,`author_id`,`author_name`,`book_desc`,`score`,`book_status`,`visit_count`,`word_count`,`comment_count`,`yesterday_buy`,`last_index_id`,`last_index_name`,`last_index_update_time`,`is_vip`,`status`,`audit_remark`,`update_time`,`create_time`,`crawl_source_id`,`crawl_book_id`,`crawl_last_time`,`crawl_is_stop`
         from book where id in
         <foreach item="id" collection="list" open="(" separator="," close=")">
             #{id}

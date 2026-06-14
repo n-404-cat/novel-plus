@@ -2954,13 +2954,24 @@ CREATE TABLE `website_info`
     qq             varchar(20)  NOT NULL COMMENT '站长QQ',
     logo           varchar(200) NOT NULL COMMENT '网站logo图片（默认）',
     logo_dark      varchar(200) NOT NULL COMMENT '网站logo图片（深色）',
+    template_name  varchar(50) DEFAULT 'green' COMMENT '前台模板',
+    novel_sensitive_word_enabled tinyint(1) DEFAULT '0' COMMENT '小说敏感词替换开启状态（0:关闭 1:开启）',
+    news_sensitive_word_enabled tinyint(1) DEFAULT '0' COMMENT '新闻敏感词替换开启状态（0:关闭 1:开启）',
     create_time    datetime     null comment '创建时间',
     create_user_id bigint       null comment '创建人ID',
     update_time    datetime     null comment '更新时间',
     update_user_id bigint       null comment '更新人ID',
     PRIMARY KEY (`id`)
 ) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4 COMMENT ='网站信息表';
+  DEFAULT CHARSET = utf8mb4 COMMENT ='网站信息';
+
+CREATE TABLE `sensitive_word` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `word` varchar(255) NOT NULL COMMENT '敏感词',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_word` (`word`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='敏感词库';
 
 INSERT INTO website_info (id, name, domain, keyword, description, qq, logo, logo_dark, create_time, create_user_id,
                           update_time, update_user_id)

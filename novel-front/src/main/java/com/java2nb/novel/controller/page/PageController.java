@@ -43,6 +43,8 @@ public class PageController extends BaseController {
 
     private final Map<String, BookContentService> bookContentServiceMap;
 
+    private final PaymentConfigService paymentConfigService;
+
     @RequestMapping("{url}.html")
     public String module(@PathVariable("url") String url) {
         return url;
@@ -136,7 +138,21 @@ public class PageController extends BaseController {
      * 充值页
      */
     @RequestMapping("pay/index.html")
-    public String pay() {
+    public String pay(Model model) {
+        PaymentConfig alipayConfig = paymentConfigService.getAlipayConfig();
+        if (alipayConfig != null) {
+            model.addAttribute("alipayQrCodeUrl", alipayConfig.getAlipayQrCodeUrl());
+            model.addAttribute("wechatQrCodeUrl", alipayConfig.getWechatQrCodeUrl());
+            model.addAttribute("alipayEnabled", alipayConfig.getEnabled() != null && alipayConfig.getEnabled() == 1);
+            model.addAttribute("wechatEnabled", alipayConfig.getWechatEnabled() != null && alipayConfig.getWechatEnabled() == 1);
+            model.addAttribute("alipayPersonalEnabled", alipayConfig.getAlipayPersonalEnabled() != null && alipayConfig.getAlipayPersonalEnabled() == 1);
+            model.addAttribute("wechatPersonalEnabled", alipayConfig.getWechatPersonalEnabled() != null && alipayConfig.getWechatPersonalEnabled() == 1);
+        } else {
+            model.addAttribute("alipayEnabled", true);
+            model.addAttribute("wechatEnabled", false);
+            model.addAttribute("alipayPersonalEnabled", true);
+            model.addAttribute("wechatPersonalEnabled", true);
+        }
         return ThreadLocalUtil.getTemplateDir() + "pay/index.html";
     }
 

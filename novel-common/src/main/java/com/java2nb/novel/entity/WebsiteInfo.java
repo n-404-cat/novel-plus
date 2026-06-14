@@ -44,6 +44,12 @@ public class WebsiteInfo {
     private Long updateUserId;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    private Byte novelSensitiveWordEnabled;
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    private Byte newsSensitiveWordEnabled;
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public Long getId() {
         return id;
     }
@@ -171,5 +177,21 @@ public class WebsiteInfo {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public void setUpdateUserId(Long updateUserId) {
         this.updateUserId = updateUserId;
+    }
+
+    public Byte getNovelSensitiveWordEnabled() {
+        return novelSensitiveWordEnabled;
+    }
+
+    public void setNovelSensitiveWordEnabled(Byte novelSensitiveWordEnabled) {
+        this.novelSensitiveWordEnabled = novelSensitiveWordEnabled;
+    }
+
+    public Byte getNewsSensitiveWordEnabled() {
+        return newsSensitiveWordEnabled;
+    }
+
+    public void setNewsSensitiveWordEnabled(Byte newsSensitiveWordEnabled) {
+        this.newsSensitiveWordEnabled = newsSensitiveWordEnabled;
     }
 }

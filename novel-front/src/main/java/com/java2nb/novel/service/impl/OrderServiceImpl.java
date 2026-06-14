@@ -1,8 +1,10 @@
 package com.java2nb.novel.service.impl;
 
 import com.java2nb.novel.entity.OrderPay;
+import com.java2nb.novel.entity.OrderPayAudit;
 import com.java2nb.novel.mapper.OrderPayDynamicSqlSupport;
 import com.java2nb.novel.mapper.OrderPayMapper;
+import com.java2nb.novel.mapper.OrderPayAuditMapper;
 import com.java2nb.novel.service.OrderService;
 import com.java2nb.novel.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,8 @@ import static org.mybatis.dynamic.sql.select.SelectDSL.select;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderPayMapper orderPayMapper;
+
+    private final OrderPayAuditMapper orderPayAuditMapper;
 
     private final UserService userService;
 
@@ -86,5 +90,32 @@ public class OrderServiceImpl implements OrderService {
             }
         }
 
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Long createAuditOrder(Byte payChannel, Integer payAmount, Long userId, String voucherUrl) {
+        Date currentDate = new Date();
+        Long outTradeNo = Long.parseLong(
+            new SimpleDateFormat("yyyyMMddHHmmssSSS").format(currentDate) + new Random().nextInt(10));
+        OrderPay orderPay = new OrderPay();
+        orderPay.setOutTradeNo(outTradeNo);
+        orderPay.setPayChannel(payChannel);
+        orderPay.setTotalAmount(payAmount);
+        orderPay.setUserId(userId);
+        orderPay.setCreateTime(currentDate);
+        orderPay.setUpdateTime(currentDate);
+        orderPay.setPayStatus((byte) 2); // 待支付状态，审核通过后变为已支付
+        orderPayMapper.insertSelective(orderPay);
+
+        OrderPayAudit audit = new OrderPayAudit();
+        audit.setOutTradeNo(outTradeNo);
+        audit.setVoucherPath(voucherUrl);
+        audit.setAuditStatus(0); // 待审核
+        audit.setCreateTime(currentDate);
+        audit.setUpdateTime(currentDate);
+        orderPayAuditMapper.insert(audit);
+
+        return outTradeNo;
     }
 }

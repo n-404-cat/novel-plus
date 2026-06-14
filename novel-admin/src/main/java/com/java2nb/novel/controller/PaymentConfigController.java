@@ -61,6 +61,9 @@ public class PaymentConfigController extends BaseController {
         if (paymentConfig.getEnabled() == null) {
             paymentConfig.setEnabled(1);
         }
+        if (paymentConfig.getWechatEnabled() == null) {
+            paymentConfig.setWechatEnabled(0); // 微信支付默认禁用
+        }
         if (isBlank(paymentConfig.getSignType())) {
             paymentConfig.setSignType("RSA2");
         }
@@ -96,6 +99,7 @@ public class PaymentConfigController extends BaseController {
         paymentConfig.setCharset("utf-8");
         paymentConfig.setPayEnvironment("sandbox");
         paymentConfig.setEnabled(1);
+        paymentConfig.setWechatEnabled(0);
         return paymentConfig;
     }
 

@@ -13,6 +13,7 @@ import com.java2nb.novel.core.utils.ThreadLocalUtil;
 import com.java2nb.novel.entity.PaymentConfig;
 import com.java2nb.novel.service.OrderService;
 import com.java2nb.novel.service.PaymentConfigService;
+import io.github.xxyopen.model.resp.RestResult;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -185,6 +186,30 @@ public class PayController extends BaseController {
 
         }
 
+    }
+
+    @SneakyThrows
+    @PostMapping("auditPay")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public RestResult<Void> auditPay(Integer payAmount, String voucherUrl, HttpServletRequest request) {
+        UserDetails userDetails = getUserDetails(request);
+        if (userDetails == null) {
+            return RestResult.fail(com.java2nb.novel.core.enums.ResponseStatus.NO_LOGIN);
+        }
+        if (payAmount == null || payAmount <= 0) {
+            return RestResult.fail(com.java2nb.novel.core.enums.ResponseStatus.PAY_AMOUNT_INVALID);
+        }
+        if (voucherUrl == null || voucherUrl.isEmpty()) {
+            return RestResult.fail(com.java2nb.novel.core.enums.ResponseStatus.PAY_VOUCHER_REQUIRED);
+        }
+        
+        try {
+            orderService.createAuditOrder((byte) 3, payAmount, userDetails.getId(), voucherUrl); // payChannel 3 for personal QR
+            return RestResult.ok();
+        } catch (Exception e) {
+            log.error("提交审核订单失败", e);
+            return RestResult.fail(com.java2nb.novel.core.enums.ResponseStatus.PAY_SUBMIT_FAIL);
+        }
     }
 
     private boolean hasRequiredAlipayFields(PaymentConfig paymentConfig) {

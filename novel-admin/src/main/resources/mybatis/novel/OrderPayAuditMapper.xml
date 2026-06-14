@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.java2nb.novel.dao.OrderPayAuditDao">
+
+    <select id="get" resultType="com.java2nb.novel.domain.OrderPayAuditDO">
+        select `id`,`out_trade_no`,`voucher_path`,`payer_account`,`ocr_result`,`audit_status`,`audit_user_id`,`audit_time`,`audit_remark`,`create_time`,`update_time`
+        from order_pay_audit
+        where id = #{value}
+    </select>
+
+    <select id="list" resultType="com.java2nb.novel.domain.OrderPayAuditDO">
+        select `id`,`out_trade_no`,`voucher_path`,`payer_account`,`ocr_result`,`audit_status`,`audit_user_id`,`audit_time`,`audit_remark`,`create_time`,`update_time`
+        from order_pay_audit
+        <where>
+            <if test="id != null and id != ''">and id = #{id}</if>
+            <if test="outTradeNo != null and outTradeNo != ''">and out_trade_no = #{outTradeNo}</if>
+            <if test="auditStatus != null and auditStatus != ''">and audit_status = #{auditStatus}</if>
+        </where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+            <otherwise>
+                order by id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        select count(*) from order_pay_audit
+        <where>
+            <if test="id != null and id != ''">and id = #{id}</if>
+            <if test="outTradeNo != null and outTradeNo != ''">and out_trade_no = #{outTradeNo}</if>
+            <if test="auditStatus != null and auditStatus != ''">and audit_status = #{auditStatus}</if>
+        </where>
+    </select>
+
+    <update id="updateAuditStatus" parameterType="com.java2nb.novel.domain.OrderPayAuditDO">
+        update order_pay_audit
+        <set>
+            <if test="auditStatus != null">`audit_status` = #{auditStatus},</if>
+            <if test="auditUserId != null">`audit_user_id` = #{auditUserId},</if>
+            <if test="auditTime != null">`audit_time` = #{auditTime},</if>
+            <if test="auditRemark != null">`audit_remark` = #{auditRemark},</if>
+            <if test="updateTime != null">`update_time` = #{updateTime}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper>

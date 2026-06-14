@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="gray-bg">
+	<div class="wrapper wrapper-content ">
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="ibox float-e-margins">
+					<div class="ibox-content">
+						<form class="form-horizontal m-t" id="signupForm">
+						<input id="id" name="id" th:value="${orderPayAudit.id}"  type="hidden">
+							<div class="form-group">	
+								<label class="col-sm-3 control-label">商户订单号：</label>
+								<div class="col-sm-8">
+									<input id="outTradeNo" name="outTradeNo" th:value="${orderPayAudit.outTradeNo}" class="form-control" type="text" readonly>
+								</div>
+							</div>
+							<div class="form-group">	
+								<label class="col-sm-3 control-label">付款账号/备注：</label>
+								<div class="col-sm-8">
+									<input id="payerAccount" name="payerAccount" th:value="${orderPayAudit.payerAccount}" class="form-control" type="text" readonly>
+								</div>
+							</div>
+							<div class="form-group">	
+								<label class="col-sm-3 control-label">支付凭证：</label>
+								<div class="col-sm-8">
+                                    <img th:src="${orderPayAudit.voucherPath}" style="max-width:100%;">
+								</div>
+							</div>
+							<div class="form-group">	
+								<label class="col-sm-3 control-label">审核状态：</label>
+								<div class="col-sm-8">
+									<label class="radio-inline">
+										<input type="radio" name="auditStatus" value="1" th:checked="${orderPayAudit.auditStatus == 1}" /> 通过
+									</label>
+									<label class="radio-inline">
+										<input type="radio" name="auditStatus" value="2" th:checked="${orderPayAudit.auditStatus == 2}" /> 拒绝
+									</label>
+								</div>
+							</div>
+							<div class="form-group">	
+								<label class="col-sm-3 control-label">审核意见：</label>
+								<div class="col-sm-8">
+									<input id="auditRemark" name="auditRemark" th:value="${orderPayAudit.auditRemark}" class="form-control" type="text">
+								</div>
+							</div>
+							<div class="form-group">
+								<div class="col-sm-8 col-sm-offset-3">
+									<button type="submit" class="btn btn-primary">提交</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+	</div>
+	</div>
+	<div th:include="include::footer"></div>
+	<script type="text/javascript" src="/js/appjs/novel/orderPayAudit/audit.js">
+	</script>
+</body>
+</html>
