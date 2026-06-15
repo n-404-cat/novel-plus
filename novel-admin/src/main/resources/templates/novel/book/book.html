@@ -45,18 +45,9 @@
 <div>
     <script type="text/javascript">
         var s_detail_h = 'hidden';
-        var s_edit_h = 'hidden';
+        var s_edit_h = '';
+        var s_audit_h = '';
         var s_remove_h = 'hidden';
-    </script>
-</div>
-<div shiro:hasPermission="test:order:detail">
-    <script type="text/javascript">
-        s_detail_h = '';
-    </script>
-</div>
-<div shiro:hasPermission="novel:book:edit">
-    <script type="text/javascript">
-        s_edit_h = '';
     </script>
 </div>
 <div shiro:hasPermission="novel:book:remove">

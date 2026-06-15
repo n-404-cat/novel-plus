@@ -58,4 +58,9 @@ public class BookContentServiceImpl implements BookContentService {
 		return bookContentDao.listByIndexIds(indexIds);
 	}
 
+	@Override
+	public BookContentDO getByIndexId(Long indexId) {
+		return bookContentDao.getByIndexId(indexId);
+	}
+
 }

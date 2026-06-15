@@ -157,9 +157,12 @@ function load() {
                         field: 'id',
                         align: 'center',
                         formatter: function (value, row, index) {
-                            var a = '<a class="btn btn-success btn-sm" href="#" title="审核" onclick="audit(\''
+                            var a = '<a class="btn btn-success btn-sm ' + s_audit_h + '" href="#" title="审核" onclick="audit(\''
                                 + row.id
                                 + '\')"><i class="fa fa-check-square-o"></i> 审核</a><br><br> ';
+                            var c = '<a class="btn btn-info btn-sm ' + s_audit_h + '" href="#" title="章节内容" onclick="chapters(\''
+                                + row.id
+                                + '\')"><i class="fa fa-list-alt"></i> 章节内容</a><br><br> ';
                             // 增加下载按钮
                             var d = '<a class="btn btn-primary btn-sm" href="#" title="下载TXT" onclick="downloadBook(\''
                                 + row.id
@@ -167,7 +170,7 @@ function load() {
                             var r = '<a class="btn btn-warning btn-sm ' + s_remove_h + '" href="#" title="删除" onclick="remove(\''
                                 + row.id
                                 + '\')"><i class="fa fa-remove"></i> 删除</a> ';
-                            return a + d + r;
+                            return a + c + d + r;
                         }
                     }
 
@@ -198,6 +201,17 @@ function audit(id) {
         shadeClose: false,
         area: ['1000px', '800px'],
         content: prefix + '/audit/' + id
+    });
+}
+
+function chapters(id) {
+    layer.open({
+        type: 2,
+        title: '章节与正文工作台',
+        maxmin: true,
+        shadeClose: false,
+        area: ['1000px', '800px'],
+        content: prefix + '/chapters/' + id
     });
 }
 

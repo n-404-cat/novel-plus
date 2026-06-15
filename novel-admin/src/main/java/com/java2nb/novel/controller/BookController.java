@@ -16,7 +16,9 @@ import com.java2nb.novel.domain.BookIndexDO;
 import com.java2nb.novel.service.BookContentService;
 import com.java2nb.novel.service.BookIndexService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.Logical;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
@@ -112,7 +114,7 @@ public class BookController {
 
     @ApiOperation(value = "审核小说页面", notes = "审核小说页面")
     @GetMapping("/audit/{id}")
-    @RequiresPermissions("novel:book:edit")
+    @RequiresAuthentication
     String audit(@PathVariable("id") Long id, Model model) {
         BookDO book = bookService.get(id);
         model.addAttribute("book", book);
@@ -122,7 +124,7 @@ public class BookController {
     @ApiOperation(value = "获取小说章节列表", notes = "获取小说章节列表")
     @ResponseBody
     @GetMapping("/indexList/{bookId}")
-    @RequiresPermissions("novel:book:edit")
+    @RequiresAuthentication
     public R indexList(@PathVariable("bookId") Long bookId) {
         Map<String, Object> params = new HashMap<>();
         params.put("bookId", bookId);
@@ -137,16 +139,45 @@ public class BookController {
     @ApiOperation(value = "获取章节正文", notes = "获取章节正文")
     @ResponseBody
     @GetMapping("/content/{indexId}")
-    @RequiresPermissions("novel:book:edit")
+    @RequiresAuthentication
     public R content(@PathVariable("indexId") Long indexId) {
-        BookContentDO content = bookContentService.get(indexId);
-        return R.ok().put("data", content != null ? content.getContent() : "");
+        BookContentDO content = bookContentService.getByIndexId(indexId);
+        return R.ok().put("data", content);
+    }
+
+    @ApiOperation(value = "小说章节内容工作台页面", notes = "小说章节内容工作台页面")
+    @GetMapping("/chapters/{id}")
+    @RequiresAuthentication
+    String chapters(@PathVariable("id") Long id, Model model) {
+        BookDO book = bookService.get(id);
+        model.addAttribute("book", book);
+        return "novel/book/chapters";
+    }
+
+    @ApiOperation(value = "更新章节标题与正文", notes = "更新章节标题与正文")
+    @ResponseBody
+    @PostMapping("/content/update")
+    @RequiresAuthentication
+    public R updateContent(Long indexId, String indexName, String content) {
+        if (indexId == null) {
+            return R.error("章节ID不能为空");
+        }
+        BookIndexDO bookIndex = new BookIndexDO();
+        bookIndex.setId(indexId);
+        bookIndex.setIndexName(indexName);
+        bookIndexService.update(bookIndex);
+
+        BookContentDO bookContent = new BookContentDO();
+        bookContent.setIndexId(indexId);
+        bookContent.setContent(content);
+        bookContentService.update(bookContent);
+        return R.ok();
     }
 
     @ApiOperation(value = "提交审核", notes = "提交审核")
     @ResponseBody
     @PostMapping("/auditSubmit")
-    @RequiresPermissions("novel:book:edit")
+    @RequiresAuthentication
     public R auditSubmit(Long id, Integer status, String auditRemark) {
         BookDO book = new BookDO();
         book.setId(id);

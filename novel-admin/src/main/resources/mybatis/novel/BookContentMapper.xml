@@ -49,6 +49,13 @@
 
     </select>
 
+    <select id="getByIndexId" resultType="com.java2nb.novel.domain.BookContentDO">
+        select `id`, `index_id`, `content`
+        from book_content
+        where index_id = #{indexId}
+        limit 1
+    </select>
+
     <insert id="save" parameterType="com.java2nb.novel.domain.BookContentDO">
         insert into book_content
         (`id`,

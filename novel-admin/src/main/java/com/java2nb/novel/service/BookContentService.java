@@ -29,4 +29,6 @@ public interface BookContentService {
 	int batchRemove(Long[] ids);
 
     List<BookContentDO> listByIndexIds(List<Long> indexIds);
+
+    BookContentDO getByIndexId(Long indexId);
 }

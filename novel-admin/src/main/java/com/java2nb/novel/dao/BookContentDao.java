@@ -36,4 +36,6 @@ public interface BookContentDao {
     int removeByIndexIds(Long[] indexIds);
 
     List<BookContentDO> listByIndexIds(@Param("indexIds") List<Long> indexIds);
+
+    BookContentDO getByIndexId(Long indexId);
 }

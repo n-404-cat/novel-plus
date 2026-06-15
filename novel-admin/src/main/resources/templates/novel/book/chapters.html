@@ -5,72 +5,16 @@
 <body class="gray-bg">
 <div class="wrapper wrapper-content ">
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-12">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h5>小说信息</h5>
+                    <h5 th:text="${book.bookName} + ' - 章节与正文工作台'"></h5>
                 </div>
-                <div class="ibox-content">
-                    <form class="form-horizontal m-t" id="auditForm">
-                        <input id="id" name="id" th:value="${book.id}" type="hidden">
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">小说封面：</label>
-                            <div class="col-sm-8">
-                                <img th:src="${book.picUrl}" style="width:100px; height:130px;" />
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">小说名：</label>
-                            <div style="padding-top:8px" class="col-sm-8" th:text="${book.bookName}"></div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">作者：</label>
-                            <div style="padding-top:8px" class="col-sm-8" th:text="${book.authorName}"></div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">分类：</label>
-                            <div style="padding-top:8px" class="col-sm-8" th:text="${book.catName}"></div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">简介：</label>
-                            <div style="padding-top:8px" class="col-sm-8" th:utext="${book.bookDesc}"></div>
-                        </div>
-                        <hr>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">审核结果：</label>
-                            <div class="col-sm-8">
-                                <label class="radio-inline"> <input type="radio" name="status" value="1" checked="checked"> 通过并上架</label>
-                                <label class="radio-inline"> <input type="radio" name="status" value="2"> 驳回</label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">审核意见：</label>
-                            <div class="col-sm-8">
-                                <textarea name="auditRemark" class="form-control" rows="3" placeholder="请输入审核意见（驳回必填）"></textarea>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-sm-8 col-sm-offset-3">
-                                <button type="button" class="btn btn-primary" onclick="submitAudit()">提交审核</button>
-                                <button type="button" class="btn btn-default" onclick="parent.layer.closeAll()">关闭</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-        
-        <div class="col-sm-6">
-            <div class="ibox float-e-margins">
-                <div class="ibox-title">
-                    <h5>章节正文预览</h5>
-                </div>
-                <div class="ibox-content" style="height: 600px; overflow-y: auto;">
+                <div class="ibox-content" style="height: 720px; overflow-y: auto;">
+                    <input id="id" th:value="${book.id}" type="hidden">
                     <div class="row">
                         <div class="col-sm-4" style="border-right: 1px solid #eee;">
-                            <ul class="list-group" id="chapterList" style="max-height: 550px; overflow-y: auto; cursor: pointer;">
-                                <!-- 动态加载章节列表 -->
-                            </ul>
+                            <ul class="list-group" id="chapterList" style="max-height: 640px; overflow-y: auto; cursor: pointer;"></ul>
                         </div>
                         <div class="col-sm-8">
                             <div class="form-group">
@@ -83,10 +27,11 @@
                             </div>
                             <div class="form-group">
                                 <label class="control-label">章节正文</label>
-                                <textarea id="chapterContentInput" class="form-control" rows="18" placeholder="请选择章节后编辑正文"></textarea>
+                                <textarea id="chapterContentInput" class="form-control" rows="24" placeholder="请选择章节后编辑正文"></textarea>
                             </div>
                             <div class="form-group">
                                 <button type="button" class="btn btn-primary btn-sm" onclick="saveChapterContent()">保存章节</button>
+                                <button type="button" class="btn btn-default btn-sm" onclick="parent.layer.close(parent.layer.getFrameIndex(window.name))">关闭</button>
                             </div>
                         </div>
                     </div>
@@ -102,7 +47,7 @@
     $(function() {
         loadChapters();
     });
-    
+
     function loadChapters() {
         var bookId = $("#id").val();
         $.get("/novel/book/indexList/" + bookId, function(res) {
@@ -116,7 +61,7 @@
                 $("#chapterList .list-group-item").off("click").on("click", function () {
                     loadContent($(this).data("id"), $(this).data("name"));
                 });
-                if(res.data.length > 0) {
+                if (res.data.length > 0) {
                     loadContent(res.data[0].id, res.data[0].indexName);
                 }
             }
@@ -126,7 +71,7 @@
     function escapeHtmlAttr(text) {
         return (text || "").replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
-    
+
     function loadContent(indexId, indexName) {
         currentIndexId = indexId;
         $("#chapterTitleInput").val(indexName);
@@ -182,35 +127,6 @@
     $("#chapterContentInput").on("input propertychange", function () {
         renderChapterPreview($(this).val());
     });
-    
-    function submitAudit() {
-        var status = $("input[name='status']:checked").val();
-        var auditRemark = $("textarea[name='auditRemark']").val();
-        if (status === '2' && !auditRemark) {
-            layer.msg("请填写驳回原因");
-            return;
-        }
-        $.ajax({
-            cache: true,
-            type: "POST",
-            url: "/novel/book/auditSubmit",
-            data: $('#auditForm').serialize(),
-            async: false,
-            error: function(request) {
-                parent.layer.alert("网络异常");
-            },
-            success: function(data) {
-                if (data.code === 0) {
-                    parent.layer.msg("操作成功");
-                    parent.reLoad();
-                    var index = parent.layer.getFrameIndex(window.name);
-                    parent.layer.close(index);
-                } else {
-                    parent.layer.alert(data.msg);
-                }
-            }
-        });
-    }
 </script>
 </body>
 </html>
