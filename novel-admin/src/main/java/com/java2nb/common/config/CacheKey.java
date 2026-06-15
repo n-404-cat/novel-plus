@@ -80,5 +80,10 @@ public interface CacheKey {
      */
     String BOOK_TEST_PARSE = "testParse";
 
+    /**
+     * AI生成图片缓存
+     */
+    String AI_GEN_PIC = "aiGenPic";
+
     String SENSITIVE_WORD_KEY = "sensitiveWordKey";
 }

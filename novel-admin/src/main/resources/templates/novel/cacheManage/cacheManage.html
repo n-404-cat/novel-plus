@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>缓存管理</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="form-group">
+                        <button class="btn btn-primary btn-sm" onclick="selectAllItems()">全选</button>
+                        <button class="btn btn-default btn-sm" onclick="invertSelection()">反选</button>
+                        <button class="btn btn-warning btn-sm" onclick="clearSelection()">清空选择</button>
+                        <button class="btn btn-danger btn-sm" onclick="clearCaches()">清理选中缓存</button>
+                    </div>
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                        <tr>
+                            <th style="width: 60px;">选择</th>
+                            <th style="width: 220px;">缓存项</th>
+                            <th style="width: 260px;">Key规则</th>
+                            <th>说明</th>
+                        </tr>
+                        </thead>
+                        <tbody id="cacheItemBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:include="include::footer"></div>
+<script type="text/javascript" src="/js/appjs/novel/cacheManage/cacheManage.js?v=2026061501"></script>
+</body>
+</html>
