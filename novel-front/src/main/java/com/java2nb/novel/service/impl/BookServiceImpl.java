@@ -231,6 +231,7 @@ public class BookServiceImpl implements BookService {
         SelectStatementProvider selectStatement = select(book.allColumns())
             .from(book)
             .where(id, isEqualTo(bookId))
+            .and(BookDynamicSqlSupport.status, isEqualTo((byte) 1))
             .build()
             .render(RenderingStrategies.MYBATIS3);
         return bookMapper.selectMany(selectStatement).get(0);
@@ -352,6 +353,7 @@ public class BookServiceImpl implements BookService {
             authorId, authorName, picUrl, bookDesc, wordCount, lastIndexUpdateTime)
             .from(book)
             .where(wordCount, isGreaterThan(0))
+            .and(BookDynamicSqlSupport.status, isEqualTo((byte) 1))
             .orderBy(sortSpecification)
             .limit(limit)
             .build()

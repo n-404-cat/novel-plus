@@ -187,6 +187,24 @@ public class BookController {
         bookService.update(book);
         return R.ok();
     }
+
+    @ApiOperation(value = "批量审核小说", notes = "批量审核小说")
+    @ResponseBody
+    @PostMapping("/batchAudit")
+    @RequiresAuthentication
+    public R batchAudit(@RequestParam("ids[]") Long[] ids, Integer status, String auditRemark) {
+        if (ids == null || ids.length == 0) {
+            return R.error("请至少选择一条小说");
+        }
+        if (status == null) {
+            return R.error("审核状态不能为空");
+        }
+        if (status == 2 && (auditRemark == null || auditRemark.trim().isEmpty())) {
+            return R.error("批量驳回时请填写审核意见");
+        }
+        int updated = bookService.batchUpdateStatus(ids, status, auditRemark);
+        return R.ok().put("updatedCount", updated);
+    }
     @GetMapping("/detail/{id}")
     @RequiresPermissions("novel:book:detail")
     String detail(@PathVariable("id") Long id, Model model) {

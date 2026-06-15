@@ -69,6 +69,25 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int batchUpdateStatus(Long[] ids, Integer status, String auditRemark) {
+        if (ids == null || ids.length == 0) {
+            return 0;
+        }
+        int updated = 0;
+        Date now = new Date();
+        for (Long id : ids) {
+            BookDO book = new BookDO();
+            book.setId(id);
+            book.setStatus(status);
+            book.setAuditRemark(auditRemark);
+            book.setUpdateTime(now);
+            updated += bookDao.update(book);
+        }
+        return updated;
+    }
+
+    @Override
     public Map<Object, Object> tableSta(Date minDate) {
         List<Map<Object, Object>> maps = bookDao.tableSta(minDate);
 

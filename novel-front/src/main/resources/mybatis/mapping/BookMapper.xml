@@ -7,6 +7,7 @@
         select
         id,cat_id,cat_name,book_name,author_id,author_name,word_count,last_index_id,last_index_name,score,pic_url,book_status,last_index_update_time,book_desc
         from book where word_count > 0
+        and status = 1
         <if test="keyword != null and keyword != ''">
             and (book_name like concat('%',#{keyword},'%') or author_name like concat('%',#{keyword},'%'))
         </if>
@@ -48,6 +49,7 @@
         from book
         where cat_id = #{catId}
           and word_count > 0
+          and status = 1
         order by RAND() LIMIT 4
     </select>
 

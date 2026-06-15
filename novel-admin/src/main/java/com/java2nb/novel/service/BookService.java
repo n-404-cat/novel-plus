@@ -29,5 +29,7 @@ public interface BookService {
 	
 	int batchRemove(Long[] ids);
 
+    int batchUpdateStatus(Long[] ids, Integer status, String auditRemark);
+
     Map<Object, Object> tableSta(Date minDate);
 }

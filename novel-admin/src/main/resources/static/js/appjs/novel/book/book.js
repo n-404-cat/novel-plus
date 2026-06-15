@@ -51,6 +51,9 @@ function load() {
                 },
                 columns: [
                     {
+                        checkbox: true
+                    },
+                    {
                         title: '序号',
                         formatter: function () {
                             return arguments[2] + 1;
@@ -257,6 +260,50 @@ function remove(id) {
             }
         });
     })
+}
+
+function batchAudit(status) {
+    var rows = $('#exampleTable').bootstrapTable('getSelections');
+    if (rows.length === 0) {
+        layer.msg("请至少选择一条小说");
+        return;
+    }
+    var ids = rows.map(function (row) {
+        return row.id;
+    });
+    var promptTitle = status === 1 ? "请输入批量审核意见（可为空）" : "请输入批量驳回原因";
+    layer.prompt({
+        formType: 2,
+        title: promptTitle,
+        area: ['420px', '180px']
+    }, function (value, index) {
+        if (status === 2 && (!value || !value.trim())) {
+            layer.msg("批量驳回必须填写原因");
+            return;
+        }
+        $.ajax({
+            type: "POST",
+            url: prefix + "/batchAudit",
+            traditional: true,
+            data: {
+                "ids[]": ids,
+                status: status,
+                auditRemark: value
+            },
+            success: function (r) {
+                if (r.code === 0) {
+                    layer.close(index);
+                    layer.msg("已处理 " + (r.updatedCount || ids.length) + " 条小说");
+                    reLoad();
+                } else {
+                    layer.alert(r.msg || "批量审核失败");
+                }
+            },
+            error: function () {
+                layer.alert("批量审核失败");
+            }
+        });
+    });
 }
 
 function resetPwd(id) {

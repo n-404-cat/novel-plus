@@ -8,17 +8,14 @@
         <div class="ibox">
             <div class="ibox-body">
                 <div class="fixed-table-toolbar">
-                    <!--<div class="columns pull-left">
-                        <button shiro:hasPermission="novel:book:add" type="button"
-                                class="btn  btn-primary" onclick="add()">
-                            <i class="fa fa-plus" aria-hidden="true"></i>添加
+                    <div class="columns pull-left">
+                        <button class="btn btn-primary" type="button" onclick="batchAudit(1)">
+                            <i class="fa fa-check" aria-hidden="true"></i>批量通过
                         </button>
-                        <button shiro:hasPermission="novel:book:batchRemove" type="button"
-                                class="btn  btn-danger"
-                                onclick="batchRemove()">
-                            <i class="fa fa-trash" aria-hidden="true"></i>删除
+                        <button class="btn btn-warning" type="button" onclick="batchAudit(2)">
+                            <i class="fa fa-times" aria-hidden="true"></i>批量驳回
                         </button>
-                    </div>-->
+                    </div>
                     <div class="columns pull-right">
                         <button class="btn btn-success" onclick="reLoad()">查询</button>
                     </div>
