@@ -47,8 +47,9 @@ function load() {
 									field : 'voucherPath', 
 									title : '支付凭证',
                                     formatter: function(value, row, index) {
-                                        if (value) {
-                                            return '<a href="' + value + '" target="_blank"><img src="' + value + '" style="max-width: 100px; max-height: 100px; object-fit: contain;" title="点击查看大图"/></a>';
+                                        var viewUrl = row.voucherViewUrl || value;
+                                        if (viewUrl) {
+                                            return '<a href="' + viewUrl + '" target="_blank"><img src="' + viewUrl + '" style="max-width: 100px; max-height: 100px; object-fit: contain;" title="点击查看大图"/></a>';
                                         }
                                         return '-';
                                     }

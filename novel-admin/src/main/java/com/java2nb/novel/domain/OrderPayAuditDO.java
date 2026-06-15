@@ -9,6 +9,7 @@ public class OrderPayAuditDO implements Serializable {
     private Long id;
     private Long outTradeNo;
     private String voucherPath;
+    private String voucherViewUrl;
     private String payerAccount;
     private String ocrResult;
     private Integer auditStatus; // 0-待审核, 1-审核通过, 2-审核拒绝
@@ -40,6 +41,14 @@ public class OrderPayAuditDO implements Serializable {
 
     public void setVoucherPath(String voucherPath) {
         this.voucherPath = voucherPath;
+    }
+
+    public String getVoucherViewUrl() {
+        return voucherViewUrl;
+    }
+
+    public void setVoucherViewUrl(String voucherViewUrl) {
+        this.voucherViewUrl = voucherViewUrl;
     }
 
     public String getPayerAccount() {

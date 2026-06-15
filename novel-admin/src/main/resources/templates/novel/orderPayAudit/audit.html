@@ -25,7 +25,10 @@
 							<div class="form-group">	
 								<label class="col-sm-3 control-label">支付凭证：</label>
 								<div class="col-sm-8">
-                                    <img th:src="${orderPayAudit.voucherPath}" style="max-width:100%;">
+                                    <a th:if="${orderPayAudit.voucherViewUrl != null and orderPayAudit.voucherViewUrl != ''}" th:href="${orderPayAudit.voucherViewUrl}" target="_blank">
+                                        <img th:src="${orderPayAudit.voucherViewUrl}" style="max-width:100%;">
+                                    </a>
+                                    <span th:if="${orderPayAudit.voucherViewUrl == null or orderPayAudit.voucherViewUrl == ''}">暂无凭证</span>
 								</div>
 							</div>
 							<div class="form-group">	
