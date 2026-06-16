@@ -1,7 +1,25 @@
 var prefix = "/novel/news"
 $(function () {
+    loadCategoryOptions();
     load();
 });
+
+function loadCategoryOptions() {
+    $.ajax({
+        type: 'GET',
+        url: '/novel/category/list',
+        data: {limit: 1000, offset: 0},
+        success: function (r) {
+            if (r.code === 0 && r.data && r.data.rows) {
+                var html = '<option value="">全部分类</option>';
+                $.each(r.data.rows, function (i, item) {
+                    html += '<option value="' + item.id + '">' + item.name + '</option>';
+                });
+                $('#catId').html(html);
+            }
+        }
+    });
+}
 
 function load() {
     $('#exampleTable')
@@ -71,6 +89,13 @@ function load() {
                         title: '来源'
                     },
 
+                    {
+                        field: 'status',
+                        title: '状态',
+                        formatter: function (value) {
+                            return value === 1 ? '<span class="label label-primary">已上架</span>' : '<span class="label label-default">已下架</span>';
+                        }
+                    },
 
                     {
                         field: 'title',

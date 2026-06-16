@@ -25,6 +25,9 @@ public class News implements Serializable {
     private Long readCount;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    private Integer status;
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
     private Date createTime;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -97,6 +100,16 @@ public class News implements Serializable {
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public void setReadCount(Long readCount) {
         this.readCount = readCount;
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public Integer getStatus() {
+        return status;
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")

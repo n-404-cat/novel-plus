@@ -29,6 +29,9 @@ public final class NewsDynamicSqlSupport {
     public static final SqlColumn<Long> readCount = news.readCount;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public static final SqlColumn<Integer> status = news.status;
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
     public static final SqlColumn<Date> createTime = news.createTime;
 
     @Generated("org.mybatis.generator.api.MyBatisGenerator")
@@ -56,6 +59,8 @@ public final class NewsDynamicSqlSupport {
         public final SqlColumn<String> title = column("title", JDBCType.VARCHAR);
 
         public final SqlColumn<Long> readCount = column("read_count", JDBCType.BIGINT);
+
+        public final SqlColumn<Integer> status = column("status", JDBCType.INTEGER);
 
         public final SqlColumn<Date> createTime = column("create_time", JDBCType.TIMESTAMP);
 

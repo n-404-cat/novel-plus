@@ -40,6 +40,8 @@ public class NewsDO implements Serializable {
 			private String title;
 	//内容
 			private String content;
+	//状态：0-下架，1-上架
+			private Integer status;
 	//发布时间
 			@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 		private Date createTime;
@@ -128,6 +130,18 @@ public class NewsDO implements Serializable {
 	 */
 	public String getContent() {
 		return content;
+	}
+	/**
+	 * 设置：状态：0-下架，1-上架
+	 */
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+	/**
+	 * 获取：状态：0-下架，1-上架
+	 */
+	public Integer getStatus() {
+		return status;
 	}
 	/**
 	 * 设置：发布时间

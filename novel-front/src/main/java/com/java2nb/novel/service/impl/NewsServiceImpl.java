@@ -42,6 +42,7 @@ public class NewsServiceImpl implements NewsService {
         if (result == null || result.isEmpty()) {
             SelectStatementProvider selectStatement = select(id, catName, catId, title, createTime)
                 .from(news)
+                .where(status, isEqualTo(1))
                 .orderBy(createTime.descending())
                 .limit(2)
                 .build()
@@ -57,6 +58,7 @@ public class NewsServiceImpl implements NewsService {
         SelectStatementProvider selectStatement = select(news.allColumns())
             .from(news)
             .where(id, isEqualTo(newsId))
+            .and(status, isEqualTo(1))
             .build()
             .render(RenderingStrategies.MYBATIS3);
         News n = newsMapper.selectMany(selectStatement).get(0);
@@ -71,6 +73,7 @@ public class NewsServiceImpl implements NewsService {
         PageHelper.startPage(page, pageSize);
         SelectStatementProvider selectStatement = select(id, catName, catId, title, createTime)
             .from(news)
+            .where(status, isEqualTo(1))
             .orderBy(createTime.descending())
             .build()
             .render(RenderingStrategies.MYBATIS3);

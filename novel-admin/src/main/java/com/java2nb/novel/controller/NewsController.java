@@ -86,6 +86,9 @@ public class NewsController {
     @PostMapping("/save")
     @RequiresPermissions("novel:news:add")
     public R save(NewsDO news) {
+        if (news.getStatus() == null) {
+            news.setStatus(1);
+        }
         if (newsService.save(news) > 0) {
             redisTemplate.delete(CacheKey.INDEX_NEWS_KEY);
             return R.ok();

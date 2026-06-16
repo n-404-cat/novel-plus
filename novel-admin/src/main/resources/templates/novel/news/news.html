@@ -25,6 +25,11 @@
 
                     <form id="searchForm">
                         <div class="columns pull-right col-md-2">
+                            <select id="catId" name="catId" class="form-control">
+                                <option value="">全部分类</option>
+                            </select>
+                        </div>
+                        <div class="columns pull-right col-md-2">
                             <input id="title" name="title" type="text" class="form-control"
                                    placeholder="标题">
                         </div>
@@ -61,6 +66,6 @@
     </script>
 </div>
 <div th:include="include :: footer"></div>
-<script type="text/javascript" src="/js/appjs/novel/news/news.js"></script>
+<script type="text/javascript" src="/js/appjs/novel/news/news.js?v=2026061601"></script>
 </body>
 </html>
