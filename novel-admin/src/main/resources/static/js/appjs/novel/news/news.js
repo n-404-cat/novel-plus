@@ -148,6 +148,17 @@ function add() {
     });
 }
 
+function crawlNews() {
+    layer.open({
+        type: 2,
+        title: '采集新闻',
+        maxmin: true,
+        shadeClose: false,
+        area: ['900px', '680px'],
+        content: prefix + '/crawl'
+    });
+}
+
 function detail(id) {
     layer.open({
         type: 2,

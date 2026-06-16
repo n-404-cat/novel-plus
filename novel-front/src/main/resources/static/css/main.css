@@ -137,6 +137,41 @@
     padding-right: 1%;
 }
 
+.hot_articles .hot_notice .index-news-item {
+    /* 首页资讯标题来自后台采集，长度不可控，固定一行避免撑乱后续模块。 */
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    height: 30px;
+    line-height: 30px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.hot_articles .hot_notice .index-news-item span {
+    flex: 0 0 auto;
+}
+
+.hot_articles .hot_notice .index-news-item a {
+    display: block;
+    flex: 1 1 auto;
+    min-width: 0;
+    padding-right: 0;
+}
+
+.hot_articles .hot_notice .index-news-more {
+    height: 24px;
+    line-height: 24px;
+    text-align: right;
+    font-size: 13px;
+}
+
+.hot_articles .hot_notice .index-news-more a {
+    display: inline-block;
+    padding-right: 0;
+    color: #3eaf7c;
+}
+
 .hot_articles span.tit {
     color: #3eaf7c;
     margin-right: 6px

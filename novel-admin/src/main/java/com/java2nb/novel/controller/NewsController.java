@@ -1,11 +1,14 @@
 package com.java2nb.novel.controller;
 
 import com.java2nb.common.config.CacheKey;
+import com.java2nb.common.exception.BusinessException;
 import com.java2nb.common.utils.PageBean;
 import com.java2nb.common.utils.Query;
 import com.java2nb.common.utils.R;
 import com.java2nb.novel.domain.NewsDO;
+import com.java2nb.novel.service.NewsCrawlService;
 import com.java2nb.novel.service.NewsService;
+import com.java2nb.novel.vo.NewsCrawlResultVO;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +34,8 @@ public class NewsController {
 
     @Autowired
     private NewsService newsService;
+    @Autowired
+    private NewsCrawlService newsCrawlService;
     @Autowired
     private StringRedisTemplate redisTemplate;
 
@@ -58,6 +63,48 @@ public class NewsController {
     @RequiresPermissions("novel:news:add")
     String add() {
         return "novel/news/add";
+    }
+
+    @ApiOperation(value = "新闻采集页面", notes = "新闻采集页面")
+    @GetMapping("/crawl")
+    @RequiresPermissions("novel:news:add")
+    String crawl() {
+        return "novel/news/crawl";
+    }
+
+    @ApiOperation(value = "新闻内置采集源", notes = "新闻内置采集源")
+    @ResponseBody
+    @GetMapping("/crawl/sources")
+    @RequiresPermissions("novel:news:add")
+    public R crawlSources() {
+        return R.ok().put("data", newsCrawlService.listBuiltInSources());
+    }
+
+    @ApiOperation(value = "预览采集新闻", notes = "预览采集新闻")
+    @ResponseBody
+    @PostMapping("/crawl/preview")
+    @RequiresPermissions("novel:news:add")
+    public R crawlPreview(String sourceCode, String url) {
+        try {
+            return R.ok().put("data", newsCrawlService.preview(sourceCode, url));
+        } catch (BusinessException e) {
+            return R.error(e.getMsg());
+        }
+    }
+
+    @ApiOperation(value = "保存采集新闻", notes = "保存采集新闻")
+    @ResponseBody
+    @PostMapping("/crawl/save")
+    @RequiresPermissions("novel:news:add")
+    public R crawlSave(String sourceCode, String url, Integer catId, String catName, Integer status) {
+        try {
+            // 采集入库后必须清理首页新闻缓存，避免前台还展示旧列表。
+            NewsCrawlResultVO result = newsCrawlService.save(sourceCode, url, catId, catName, status);
+            redisTemplate.delete(CacheKey.INDEX_NEWS_KEY);
+            return R.ok().put("data", result);
+        } catch (BusinessException e) {
+            return R.error(e.getMsg());
+        }
     }
 
     @ApiOperation(value = "修改新闻表页面", notes = "修改新闻表页面")

@@ -45,8 +45,9 @@
                 </dl>
 
                 <dl class="hot_notice" id="indexNews">
-                    <dd style="text-align:left;" th:each="news : ${newsList}"><span th:text="'['+${news.catName}+']'"></span><a th:href="'/about/newsInfo-'+${news.id}+'.html'" th:utext="${news.title}"></a>
+                    <dd class="index-news-item" th:each="news : ${newsList}"><span th:text="'['+${news.catName}+']'"></span><a th:href="'/about/newsInfo-'+${news.id}+'.html'" th:utext="${news.title}"></a>
                     </dd>
+                    <dd class="index-news-more"><a href="/about/news.html">更多资讯&gt;</a></dd>
 
                 </dl>
             </div>
