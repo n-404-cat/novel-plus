@@ -31,7 +31,10 @@ $("[id^='contentEditor']").each(function (index, ele) {
     }
     editor.customConfig.uploadImgShowBase64 = true;
     editor.create();
-    editor.txt.html($("#" + relName).val());
+    var rawContent = $("#contentRaw" + relName).val() || $("#" + relName).val() || "";
+    // 编辑采集新闻时必须从 textarea 读取原始富文本，避免 input value 转义导致 img 标签丢失。
+    editor.txt.html(rawContent);
+    $("#" + relName).val(editor.txt.html());
 
 })
 

@@ -50,7 +50,8 @@
                         <div class="form-group">
                             <label class="col-sm-3 control-label">内容：</label>
                             <div class="col-sm-8">
-                                <input type="hidden" id="content" name="content" th:value="${news.content}"/>
+                                <input type="hidden" id="content" name="content"/>
+                                <textarea id="contentRawcontent" style="display:none;" th:text="${news.content}"></textarea>
                                 <div id="contentEditorcontent">
 
                                 </div>
@@ -80,7 +81,7 @@
 </div>
 <div th:include="include::footer"></div>
 <script type="text/javascript" src="/wangEditor/release/wangEditor.js"></script>
-<script type="text/javascript" src="/js/appjs/novel/news/edit.js?v=2026061601">
+<script type="text/javascript" src="/js/appjs/novel/news/edit.js?v=2026061602">
 </script>
 <script>
     $.ajax({
