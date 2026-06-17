@@ -17,6 +17,16 @@
 <div th:replace="common/top :: top('0')">
 </div>
 
+<div class="announcement-bar box_center cf" id="announcementBar">
+    <span class="announcement-label">公告</span>
+    <div class="announcement-scroll">
+        <div class="announcement-scroll-inner" id="announcementScrollInner">
+            <a th:each="announcement : ${announcementList}" th:href="'/about/announcementInfo-'+${announcement.id}+'.html'" th:text="${announcement.title}"></a>
+        </div>
+    </div>
+    <a class="announcement-more" href="/about/announcement.html">更多&gt;</a>
+</div>
+
 <div class="main box_center cf">
     <div class="channelWrap channelBanner cf">
         <div class="leftBox">
@@ -194,6 +204,7 @@
 </body>
 <div th:replace="common/js :: js"></div>
 <script src="/javascript/lazyload.js" type="text/javascript"></script>
+<script src="/javascript/announcement.js?v=2026061601" type="text/javascript"></script>
 <script language="javascript" type="text/javascript">
     var $div = $('.scBigImg dl');//放置大图容器
     var $nav = $('.scSmallImg li');//放置缩略图容器

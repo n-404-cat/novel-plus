@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.java2nb.novel.dao.AnnouncementDao">
+
+    <sql id="announcementColumns">
+        `id`,`title`,`content`,`type`,`status`,`close_mode`,`sort`,`start_time`,`end_time`,`create_time`,`create_user_id`,`update_time`,`update_user_id`
+    </sql>
+
+    <select id="get" resultType="com.java2nb.novel.domain.AnnouncementDO">
+        select <include refid="announcementColumns"/> from announcement where id = #{value}
+    </select>
+
+    <select id="list" resultType="com.java2nb.novel.domain.AnnouncementDO">
+        select <include refid="announcementColumns"/> from announcement
+        <where>
+            <if test="id != null and id != ''"> and id = #{id} </if>
+            <if test="title != null and title != ''"> and title like concat('%',#{title},'%') </if>
+            <if test="type != null and type != ''"> and type = #{type} </if>
+            <if test="status != null and status != ''"> and status = #{status} </if>
+            <if test="closeMode != null and closeMode != ''"> and close_mode = #{closeMode} </if>
+        </where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+            <otherwise>
+                order by sort desc, create_time desc, id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        select count(*) from announcement
+        <where>
+            <if test="id != null and id != ''"> and id = #{id} </if>
+            <if test="title != null and title != ''"> and title like concat('%',#{title},'%') </if>
+            <if test="type != null and type != ''"> and type = #{type} </if>
+            <if test="status != null and status != ''"> and status = #{status} </if>
+            <if test="closeMode != null and closeMode != ''"> and close_mode = #{closeMode} </if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="com.java2nb.novel.domain.AnnouncementDO">
+        insert into announcement
+        (`title`,`content`,`type`,`status`,`close_mode`,`sort`,`start_time`,`end_time`,`create_time`,`create_user_id`,`update_time`,`update_user_id`)
+        values
+        (#{title},#{content},#{type},#{status},#{closeMode},#{sort},#{startTime},#{endTime},#{createTime},#{createUserId},#{updateTime},#{updateUserId})
+    </insert>
+
+    <update id="update" parameterType="com.java2nb.novel.domain.AnnouncementDO">
+        update announcement
+        <set>
+            <if test="title != null">`title` = #{title}, </if>
+            <if test="content != null">`content` = #{content}, </if>
+            <if test="type != null">`type` = #{type}, </if>
+            <if test="status != null">`status` = #{status}, </if>
+            <if test="closeMode != null">`close_mode` = #{closeMode}, </if>
+            <if test="sort != null">`sort` = #{sort}, </if>
+            <if test="startTime != null">`start_time` = #{startTime}, </if>
+            <if test="endTime != null">`end_time` = #{endTime}, </if>
+            <if test="updateTime != null">`update_time` = #{updateTime}, </if>
+            <if test="updateUserId != null">`update_user_id` = #{updateUserId}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="remove">
+        delete from announcement where id = #{value}
+    </delete>
+
+    <delete id="batchRemove">
+        delete from announcement where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -116,7 +116,7 @@
     </div>
     <div id="payAmount" class="pay_way layui-row" style="text-align: center;padding-top: 20px;">
         <h5>选择充值金额</h5>
-        <div th:if="${alipayQrCodeUrl != null || wechatQrCodeUrl != null}" style="padding: 10px; margin: 10px; background-color: #f8f8f8; border-radius: 4px; text-align: left; font-size: 14px; color: #666;">
+        <div th:if="${(alipayPersonalEnabled and alipayQrCodeUrl != null and alipayQrCodeUrl != '') or (wechatPersonalEnabled and wechatQrCodeUrl != null and wechatQrCodeUrl != '')}" style="padding: 10px; margin: 10px; background-color: #f8f8f8; border-radius: 4px; text-align: left; font-size: 14px; color: #666;">
             提示：本站已开启个人收款模式，如选择支付宝/微信个人收款，请扫码支付后上传支付凭证。
         </div>
 
@@ -126,8 +126,8 @@
             <ul id="ulPayType">
                 <li valp="1" class="on"><img src="../images/pay_zfb.png" alt="支付宝"></li>
                 <li valp="2"><img src="../images/pay_wx.png" alt="微信"></li>
-                <li valp="3" th:if="${alipayQrCodeUrl != null}"><img src="../images/pay_gr.png" alt="支付宝个人收款" style="height: 24px; vertical-align: middle;"> <span style="line-height: 24px;">支付宝个人收款</span></li>
-                <li valp="4" th:if="${wechatQrCodeUrl != null}"><img src="../images/pay_gr.png" alt="微信个人收款" style="height: 24px; vertical-align: middle;"> <span style="line-height: 24px;">微信个人收款</span></li>
+                <li valp="3" th:if="${alipayPersonalEnabled and alipayQrCodeUrl != null and alipayQrCodeUrl != ''}"><img src="../images/pay_gr.png" alt="支付宝个人收款" style="height: 24px; vertical-align: middle;"> <span style="line-height: 24px;">支付宝个人收款</span></li>
+                <li valp="4" th:if="${wechatPersonalEnabled and wechatQrCodeUrl != null and wechatQrCodeUrl != ''}"><img src="../images/pay_gr.png" alt="微信个人收款" style="height: 24px; vertical-align: middle;"> <span style="line-height: 24px;">微信个人收款</span></li>
             </ul>
         </div>
         <li vals="10" class="layui-col-xs4 layui-col-sm3 layui-col-md2">

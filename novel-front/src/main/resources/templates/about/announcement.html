@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head th:replace="~{common/header :: common_head(~{::title},~{::meta},~{::link},~{})}">
+    <title th:text="'公告中心_'+${application.website.name}"></title>
+    <meta name="keywords" content="公告,小说公告,网站公告"/>
+    <meta name="description" th:content="${application.website.name}+'公告中心'"/>
+    <link rel="stylesheet" href="/css/about.css"/>
+</head>
+<body class="body">
+<div th:replace="~{common/top :: top('')}"></div>
+<div class="main box_center cf">
+    <div class="my_r" style="width: 960px">
+        <div class="newsBox">
+            <ul class="news_list" id="announcementList"></ul>
+        </div>
+        <div class="pageBox cf" id="announcementPage"></div>
+    </div>
+</div>
+<div th:replace="~{common/footer :: footer}"></div>
+<div th:replace="~{common/js :: js}"></div>
+<script language="javascript" type="text/javascript">
+    search(1, 10);
+
+    function search(curr, limit) {
+        $.ajax({
+            type: "get",
+            url: "/announcement/listByPage",
+            data: {'curr': curr, 'limit': limit},
+            dataType: "json",
+            success: function (data) {
+                if (data.code == 200) {
+                    var list = data.data.list || [];
+                    var html = "";
+                    for (var i = 0; i < list.length; i++) {
+                        var announcement = list[i];
+                        html += "<li><h5><i class=\"dot\"></i><a href=\"announcementInfo-" + announcement.id + ".html\">" + announcement.title + "</a></h5><p>" + formatDateText(announcement.createTime) + "</p></li>";
+                    }
+                    $("#announcementList").html(html);
+                    layui.use('laypage', function () {
+                        layui.laypage.render({
+                            elem: 'announcementPage',
+                            count: data.data.total,
+                            curr: data.data.pageNum,
+                            limit: data.data.pageSize,
+                            jump: function (obj, first) {
+                                if (!first) {
+                                    search(obj.curr, obj.limit);
+                                }
+                            }
+                        });
+                    });
+                } else {
+                    layer.alert(data.msg);
+                }
+            },
+            error: function () {
+                layer.alert('网络异常');
+            }
+        });
+    }
+
+    function formatDateText(value) {
+        if (!value) {
+            return "";
+        }
+        var date = new Date(value);
+        if (isNaN(date.getTime())) {
+            return value;
+        }
+        // 公告列表面向普通用户展示，只保留年月日，避免 ISO 时间字符串难以理解。
+        return date.getFullYear() + "年" + pad(date.getMonth() + 1) + "月" + pad(date.getDate()) + "日";
+    }
+
+    function pad(value) {
+        return value < 10 ? "0" + value : value;
+    }
+</script>
+</body>
+</html>

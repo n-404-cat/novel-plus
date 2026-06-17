@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content ">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form class="form-horizontal m-t" id="signupForm">
+                        <input id="id" name="id" th:value="${announcement.id}" type="hidden">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">标题：</label>
+                            <div class="col-sm-8">
+                                <input id="title" name="title" th:value="${announcement.title}" class="form-control" type="text" maxlength="200">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">类型：</label>
+                            <div class="col-sm-3">
+                                <select id="type" name="type" class="form-control">
+                                    <option value="1" th:selected="${announcement.type == 1}">文章公告</option>
+                                    <option value="2" th:selected="${announcement.type == 2}">首页滚动</option>
+                                    <option value="3" th:selected="${announcement.type == 3}">弹窗公告</option>
+                                    <option value="4" th:selected="${announcement.type == 4}">右下角公告</option>
+                                </select>
+                            </div>
+                            <label class="col-sm-2 control-label">排序：</label>
+                            <div class="col-sm-2">
+                                <input id="sort" name="sort" th:value="${announcement.sort}" class="form-control" type="number">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">关闭策略：</label>
+                            <div class="col-sm-5">
+                                <select id="closeMode" name="closeMode" class="form-control">
+                                    <option value="2" th:selected="${announcement.closeMode == null || announcement.closeMode == 2}">下次打开重新提示</option>
+                                    <option value="1" th:selected="${announcement.closeMode == 1}">关闭后永不提示</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">展示时间：</label>
+                            <div class="col-sm-3">
+                                <input id="startTime" name="startTime" class="form-control" type="text"
+                                       placeholder="例如：2026-06-17 14:30:00"
+                                       th:value="${announcement.startTime}==null?null:${#dates.format(announcement.startTime,'yyyy-MM-dd HH:mm:ss')}">
+                            </div>
+                            <div class="col-sm-3">
+                                <input id="endTime" name="endTime" class="form-control" type="text"
+                                       placeholder="例如：2026-06-30 23:59:59"
+                                       th:value="${announcement.endTime}==null?null:${#dates.format(announcement.endTime,'yyyy-MM-dd HH:mm:ss')}">
+                            </div>
+                            <div class="col-sm-8 col-sm-offset-3">
+                                <span class="help-block m-b-none">格式必须为：yyyy-MM-dd HH:mm:ss，例如 2026-06-17 14:30:00；不限制展示时间可留空。</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">内容：</label>
+                            <div class="col-sm-8">
+                                <input type="hidden" id="content" name="content"/>
+                                <textarea id="contentRawcontent" style="display:none;" th:text="${announcement.content}"></textarea>
+                                <div id="contentEditorcontent"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">状态：</label>
+                            <div class="col-sm-8">
+                                <label class="radio-inline"><input type="radio" name="status" value="1" th:checked="${announcement.status == null || announcement.status == 1}"> 上架</label>
+                                <label class="radio-inline"><input type="radio" name="status" value="0" th:checked="${announcement.status == 0}"> 下架</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-8 col-sm-offset-3">
+                                <button type="submit" class="btn btn-primary">提交</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:include="include::footer"></div>
+<script type="text/javascript" src="/wangEditor/release/wangEditor.js"></script>
+<script type="text/javascript" src="/js/appjs/novel/announcement/edit.js?v=2026061601"></script>
+</body>
+</html>

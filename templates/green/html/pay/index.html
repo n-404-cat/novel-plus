@@ -28,8 +28,16 @@
                     <ul class="pay_way cf" id="ulPayType">
                             <li class="on" valp="1" th:if="${alipayEnabled}"><img class="pay_pic" src="../images/pay_zfb.png" alt="支付宝支付"/></li>
                             <li valp="2" th:if="${wechatEnabled}"><img class="pay_pic" src="../images/pay_wx.png" alt="微信支付"/></li>
-                            <li valp="3" th:if="${alipayQrCodeUrl != null && alipayQrCodeUrl != '' && alipayPersonalEnabled}" th:class="${!alipayEnabled && !wechatEnabled ? 'on' : ''}"><img class="pay_pic" src="../images/pay_zfb.png" alt="支付宝支付"/></li>
-                            <li valp="4" th:if="${wechatQrCodeUrl != null && wechatQrCodeUrl != '' && wechatPersonalEnabled}" th:class="${!alipayEnabled && !wechatEnabled && (!alipayPersonalEnabled || alipayQrCodeUrl == null || alipayQrCodeUrl == '') ? 'on' : ''}"><img class="pay_pic" src="../images/pay_wx.png" alt="微信支付"/></li>
+                            <li valp="3"
+                                th:if="${alipayPersonalEnabled and alipayQrCodeUrl != null and alipayQrCodeUrl != ''}"
+                                th:class="${!alipayEnabled && !wechatEnabled ? 'on' : ''}">
+                                <img class="pay_pic" src="../images/pay_zfb.png" alt="支付宝个人收款"/>
+                            </li>
+                            <li valp="4"
+                                th:if="${wechatPersonalEnabled and wechatQrCodeUrl != null and wechatQrCodeUrl != ''}"
+                                th:class="${!alipayEnabled && !wechatEnabled && !(alipayPersonalEnabled and alipayQrCodeUrl != null and alipayQrCodeUrl != '') ? 'on' : ''}">
+                                <img class="pay_pic" src="../images/pay_wx.png" alt="微信个人收款"/>
+                            </li>
                         </ul>
                     <h5>选择充值金额</h5>
                     <ul class="pay_way cf" id="ulZFWX">
@@ -133,7 +141,7 @@
         }
 
         if (payType == 3 || payType == 4) {
-                // 个人收款模式需要在同一屏内展示二维码、凭证上传和审核提交，避免用户误以为弹窗没有后续操作。
+                // 个人收款模式需要在同一屏内展示二维码、凭证上传和审核提交，避免用户误以为弹窗无后续操作。
                 var qrCodeUrl = payType == 3 ? '[[${alipayQrCodeUrl}]]' : '[[${wechatQrCodeUrl}]]';
                 var payName = payType == 3 ? '支付宝' : '微信';
                 var html = '<div style="padding: 14px 18px 16px; height: 100%; display: flex; flex-direction: column; text-align: center; box-sizing: border-box; overflow: hidden;">' +

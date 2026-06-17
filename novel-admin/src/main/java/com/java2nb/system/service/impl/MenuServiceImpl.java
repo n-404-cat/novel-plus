@@ -130,7 +130,19 @@ public class MenuServiceImpl implements MenuService {
 
 	@Override
 	public Set<String> listPerms(Long userId) {
-		List<String> perms = menuMapper.listUserPerms(userId);
+		List<String> perms;
+		if (userId != null && userId == 1L) {
+			perms = new ArrayList<>();
+			// 超级管理员必须拥有所有菜单权限，避免新增菜单 SQL 漏授权或角色缓存未刷新时出现 403。
+			List<MenuDO> menus = menuMapper.list(new HashMap<>(16));
+			for (MenuDO menu : menus) {
+				if (StringUtils.isNotBlank(menu.getPerms())) {
+					perms.add(menu.getPerms());
+				}
+			}
+		} else {
+			perms = menuMapper.listUserPerms(userId);
+		}
 		Set<String> permsSet = new HashSet<>();
 		for (String perm : perms) {
 			if (StringUtils.isNotBlank(perm)) {

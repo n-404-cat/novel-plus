@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head th:replace="common/header :: common_head(~{::title},~{::meta},~{::link},~{})">
+    <title th:text="${announcement == null ? '公告不存在' : announcement.title}+'_'+${application.website.name}"></title>
+    <meta name="keywords" content="公告,小说公告,网站公告"/>
+    <meta name="description" th:content="${application.website.name}+'公告详情'"/>
+    <link rel="stylesheet" href="/css/about.css"/>
+</head>
+<body class="body">
+<div th:replace="common/top :: top('')"></div>
+<div class="main box_center cf">
+    <div class="newsMain cf" th:if="${announcement != null}">
+        <div class="nav_sub">
+            当前位置：<a href="/"> 首页 </a> &gt; <a href="/about/announcement.html"> 公告中心 </a> &gt; <span th:utext="${announcement.title}"></span>
+        </div>
+        <div class="channelWrap channelNews cf">
+            <div class="news_title">
+                <h2 th:utext="${announcement.title}"></h2>
+                <p class="from"><span class="time" th:text="'时间：'+${#dates.format(announcement.createTime, 'yy-MM-dd')}"></span></p>
+            </div>
+            <div class="news_info" th:utext="${announcement.content}"></div>
+        </div>
+    </div>
+    <div class="newsMain cf" th:if="${announcement == null}">
+        <div class="channelWrap channelNews cf">
+            <div class="news_title"><h2>公告不存在或已下架</h2></div>
+        </div>
+    </div>
+</div>
+<div th:replace="common/footer :: footer"></div>
+<div th:replace="common/js :: js"></div>
+</body>
+</html>

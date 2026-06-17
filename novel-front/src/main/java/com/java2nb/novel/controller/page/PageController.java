@@ -35,6 +35,8 @@ public class PageController extends BaseController {
 
     private final NewsService newsService;
 
+    private final AnnouncementService announcementService;
+
     private final AuthorService authorService;
 
     private final UserService userService;
@@ -89,8 +91,11 @@ public class PageController extends BaseController {
         //加载首页新闻线程
         CompletableFuture<List<News>> newsCompletableFuture = CompletableFuture.supplyAsync(newsService::listIndexNews,
             threadPoolExecutor);
+        CompletableFuture<List<Announcement>> announcementCompletableFuture = CompletableFuture.supplyAsync(
+            announcementService::listRollingAnnouncements, threadPoolExecutor);
         model.addAttribute("bookMap", bookCompletableFuture.get());
         model.addAttribute("newsList", newsCompletableFuture.get());
+        model.addAttribute("announcementList", announcementCompletableFuture.get());
         return ThreadLocalUtil.getTemplateDir() + "index";
     }
 
@@ -348,6 +353,17 @@ public class PageController extends BaseController {
         News news = newsService.queryNewsInfo(newsId);
         model.addAttribute("news", news);
         return "about/news_info";
+    }
+
+    /**
+     * 公告内容页面
+     */
+    @RequestMapping("/about/announcementInfo-{announcementId}.html")
+    public String announcementInfo(@PathVariable("announcementId") Long announcementId, Model model) {
+        // 公告详情只展示当前上架且在展示时间范围内的数据，避免下架公告被直接访问。
+        Announcement announcement = announcementService.queryAnnouncementInfo(announcementId);
+        model.addAttribute("announcement", announcement);
+        return "about/announcement_info";
     }
 
 
