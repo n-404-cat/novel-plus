@@ -15,7 +15,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 项目核心过滤器
@@ -25,6 +30,23 @@ public class NovelFilter implements Filter {
 
     private static final String DEFAULT_TEMPLATE_NAME = "green";
     private static final long WEBSITE_INFO_CACHE_SECONDS = 300L;
+    private static final long FILE_RATE_WINDOW_MILLIS = 60_000L;
+    private static final int FILE_RATE_MAX_REQUESTS = 240;
+    private static final long FILE_RATE_MAX_BYTES = 80L * 1024L * 1024L;
+
+    /**
+     * 电子书源文件不能通过 /files 直连下载，只能由阅读服务按格式受控输出。
+     */
+    private static final Set<String> PROTECTED_EBOOK_EXTENSIONS = Set.of("pdf", "txt", "epub", "azw3", "mobi");
+
+    /**
+     * /files 仅保留图片、字体等展示型公开资源，避免未知扩展名被当成下载通道。
+     */
+    private static final Set<String> PUBLIC_FILE_EXTENSIONS = Set.of(
+        "jpg", "jpeg", "png", "gif", "webp", "svg", "ico", "bmp", "avif",
+        "css", "js", "woff", "woff2", "ttf", "eot");
+
+    private static final Map<String, FileAccessCounter> FILE_ACCESS_COUNTERS = new ConcurrentHashMap<>();
 
     /**
      * 当前已确认完整可用的模板集合。
@@ -48,30 +70,15 @@ public class NovelFilter implements Filter {
         HttpServletResponse resp = (HttpServletResponse) servletResponse;
         String requestUri = req.getRequestURI();
 
+        if (requestUri.toLowerCase(Locale.ROOT).endsWith(".apk")) {
+            // 用户端不允许提供客户端安装包等可下载资源，所有 APK 地址在入口处直接拒绝。
+            resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+
         //本地图片访问处理
         if (requestUri.contains(Constants.LOCAL_PIC_PREFIX) || requestUri.startsWith("/files/")) {
-            //缓存10天
-            resp.setDateHeader("expires", System.currentTimeMillis()+60*60*24*10*1000);
-            String path;
-            if (requestUri.contains(Constants.LOCAL_PIC_PREFIX)) {
-                path = picSavePath + requestUri;
-            } else {
-                path = picSavePath + requestUri.replaceFirst("/files/", "");
-            }
-            File file = new File(path);
-            if (!file.exists()) {
-                System.out.println("File not found: " + file.getAbsolutePath());
-                filterChain.doFilter(servletRequest, servletResponse);
-                return;
-            }
-            OutputStream out = resp.getOutputStream();
-            InputStream input = new FileInputStream(file);
-            byte[] b = new byte[4096];
-            for (int n; (n = input.read(b)) != -1; ) {
-                out.write(b, 0, n);
-            }
-            input.close();
-            out.close();
+            handleLocalFileRequest(req, resp, filterChain, servletRequest, servletResponse, requestUri);
             return;
 
         }
@@ -110,6 +117,108 @@ public class NovelFilter implements Filter {
     @Override
     public void destroy() {
 
+    }
+
+    private void handleLocalFileRequest(HttpServletRequest req, HttpServletResponse resp, FilterChain filterChain,
+        ServletRequest servletRequest, ServletResponse servletResponse, String requestUri) throws IOException, ServletException {
+        File file = resolveLocalPublicFile(requestUri);
+        if (file == null) {
+            resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+        if (!file.exists() || !file.isFile()) {
+            // /files 是本地上传资源通道，缺失文件直接 404，避免继续进入 Spring 静态资源链路并打印异常堆栈。
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
+
+        String extension = extractExtension(file.getName());
+        if (PROTECTED_EBOOK_EXTENSIONS.contains(extension) || !PUBLIC_FILE_EXTENSIONS.contains(extension)) {
+            resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+        if (exceedFileRateLimit(clientIp(req), file.length())) {
+            resp.sendError(429, "File access rate limit exceeded");
+            return;
+        }
+
+        String mimeType = req.getServletContext().getMimeType(file.getName());
+        if (mimeType != null) {
+            resp.setContentType(mimeType);
+        }
+        resp.setHeader("X-Content-Type-Options", "nosniff");
+        resp.setHeader("Content-Disposition", "inline");
+        // 公开图片允许短期缓存，但不再使用 10 天强缓存，便于资源替换和异常流量治理。
+        resp.setHeader("Cache-Control", "public, max-age=3600");
+        resp.setDateHeader("Expires", System.currentTimeMillis() + 60L * 60L * 1000L);
+        resp.setContentLengthLong(file.length());
+        try (InputStream input = new FileInputStream(file);
+             OutputStream out = resp.getOutputStream()) {
+            byte[] buffer = new byte[8192];
+            for (int n; (n = input.read(buffer)) != -1; ) {
+                out.write(buffer, 0, n);
+            }
+            out.flush();
+        }
+    }
+
+    private File resolveLocalPublicFile(String requestUri) throws IOException {
+        if (picSavePath == null || picSavePath.isBlank()) {
+            return null;
+        }
+        String relativePath;
+        if (requestUri.startsWith("/files/")) {
+            relativePath = requestUri.replaceFirst("/files/", "");
+        } else if (requestUri.contains(Constants.LOCAL_PIC_PREFIX)) {
+            relativePath = requestUri.replaceFirst("^" + Constants.LOCAL_PIC_PREFIX, "");
+        } else {
+            return null;
+        }
+        relativePath = URLDecoder.decode(relativePath, StandardCharsets.UTF_8);
+        if (relativePath.contains("..") || relativePath.startsWith("/") || relativePath.startsWith("\\")) {
+            return null;
+        }
+        File baseDir = new File(picSavePath).getCanonicalFile();
+        File file = new File(baseDir, relativePath).getCanonicalFile();
+        // 防止通过编码后的 ../ 绕出上传目录读取任意文件。
+        if (!file.toPath().startsWith(baseDir.toPath())) {
+            return null;
+        }
+        return file;
+    }
+
+    private String extractExtension(String fileName) {
+        if (fileName == null || !fileName.contains(".")) {
+            return "";
+        }
+        return fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase(Locale.ROOT);
+    }
+
+    private boolean exceedFileRateLimit(String clientIp, long fileBytes) {
+        long now = System.currentTimeMillis();
+        FileAccessCounter counter = FILE_ACCESS_COUNTERS.computeIfAbsent(clientIp, key -> new FileAccessCounter(now));
+        synchronized (counter) {
+            if (now - counter.windowStart > FILE_RATE_WINDOW_MILLIS) {
+                counter.windowStart = now;
+                counter.requests = 0;
+                counter.bytes = 0L;
+            }
+            counter.requests++;
+            counter.bytes += Math.max(fileBytes, 0L);
+            return counter.requests > FILE_RATE_MAX_REQUESTS || counter.bytes > FILE_RATE_MAX_BYTES;
+        }
+    }
+
+    private String clientIp(HttpServletRequest req) {
+        String forwardedFor = req.getHeader("X-Forwarded-For");
+        if (forwardedFor != null && !forwardedFor.isBlank()) {
+            return forwardedFor.split(",")[0].trim();
+        }
+        String realIp = req.getHeader("X-Real-IP");
+        if (realIp != null && !realIp.isBlank()) {
+            return realIp;
+        }
+        return req.getRemoteAddr();
     }
 
     /**
@@ -191,7 +300,6 @@ public class NovelFilter implements Filter {
             || "/favicon.ico".equals(requestUri)
             || "/mang.html".equals(requestUri)
             || "/mang.png".equals(requestUri)
-            || "/HotBook.apk".equals(requestUri)
             || "/IMG_1470.JPG".equals(requestUri);
     }
 
@@ -206,6 +314,11 @@ public class NovelFilter implements Filter {
         }
         if (!themedFile.exists() || !themedFile.isFile()) {
             return false;
+        }
+        if ("apk".equals(extractExtension(themedFile.getName()))) {
+            // 用户端不再提供客户端安装包下载，模板静态资源层也要阻断旧 APK 地址。
+            resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return true;
         }
 
         String mimeType = req.getServletContext().getMimeType(themedFile.getName());
@@ -231,5 +344,15 @@ public class NovelFilter implements Filter {
     private File resolveTemplateStaticFile(String templateName, String requestUri) {
         String projectDir = ProjectDirUtil.resolveProjectDir();
         return new File(projectDir + "/templates/" + templateName + "/static" + requestUri);
+    }
+
+    private static class FileAccessCounter {
+        private long windowStart;
+        private int requests;
+        private long bytes;
+
+        private FileAccessCounter(long windowStart) {
+            this.windowStart = windowStart;
+        }
     }
 }

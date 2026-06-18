@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<head th:include="include :: header"></head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content">
+    <div class="ibox">
+        <div class="ibox-content">
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">封面：</label>
+                    <div class="col-sm-8">
+                        <img th:if="${ebook.coverUrl != null && ebook.coverUrl != ''}" th:src="${ebook.coverUrl}" style="width:120px;height:160px;object-fit:cover;border:1px solid #ddd;">
+                    </div>
+                </div>
+                <div class="form-group"><label class="col-sm-2 control-label">书名：</label><div class="col-sm-8" style="padding-top:7px" th:text="${ebook.bookName}"></div></div>
+                <div class="form-group"><label class="col-sm-2 control-label">作者：</label><div class="col-sm-8" style="padding-top:7px" th:text="${ebook.authorName}"></div></div>
+                <div class="form-group"><label class="col-sm-2 control-label">ISBN：</label><div class="col-sm-8" style="padding-top:7px" th:text="${ebook.isbn}"></div></div>
+                <div class="form-group"><label class="col-sm-2 control-label">格式：</label><div class="col-sm-8" style="padding-top:7px" th:text="${ebook.fileFormat}"></div></div>
+                <div class="form-group"><label class="col-sm-2 control-label">文件：</label><div class="col-sm-8" style="padding-top:7px"><a th:href="${ebook.fileUrl}" target="_blank" th:text="${ebook.fileUrl}"></a></div></div>
+                <div class="form-group"><label class="col-sm-2 control-label">简介：</label><div class="col-sm-8" style="padding-top:7px;white-space:pre-wrap" th:text="${ebook.intro}"></div></div>
+                <div class="form-group"><label class="col-sm-2 control-label">作者简介：</label><div class="col-sm-8" style="padding-top:7px;white-space:pre-wrap" th:text="${ebook.authorIntro}"></div></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:include="include::footer"></div>
+</body>
+</html>

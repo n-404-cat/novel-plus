@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.java2nb.novel.dao.EbookDao">
+
+    <sql id="ebookColumns">
+        `id`,`book_name`,`author_name`,`isbn`,`cover_url`,`file_url`,`file_format`,`file_size`,`intro`,`author_intro`,`status`,`sort`,`create_time`,`create_user_id`,`update_time`,`update_user_id`
+    </sql>
+
+    <select id="get" resultType="com.java2nb.novel.domain.EbookDO">
+        select <include refid="ebookColumns"/> from ebook where id = #{value}
+    </select>
+
+    <select id="list" resultType="com.java2nb.novel.domain.EbookDO">
+        select <include refid="ebookColumns"/> from ebook
+        <where>
+            <if test="id != null and id != ''"> and id = #{id} </if>
+            <if test="bookName != null and bookName != ''"> and book_name like concat('%',#{bookName},'%') </if>
+            <if test="authorName != null and authorName != ''"> and author_name like concat('%',#{authorName},'%') </if>
+            <if test="isbn != null and isbn != ''"> and isbn like concat('%',#{isbn},'%') </if>
+            <if test="fileFormat != null and fileFormat != ''"> and file_format = #{fileFormat} </if>
+            <if test="status != null and status != ''"> and status = #{status} </if>
+        </where>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+            <otherwise>
+                order by sort desc, create_time desc, id desc
+            </otherwise>
+        </choose>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="count" resultType="int">
+        select count(*) from ebook
+        <where>
+            <if test="id != null and id != ''"> and id = #{id} </if>
+            <if test="bookName != null and bookName != ''"> and book_name like concat('%',#{bookName},'%') </if>
+            <if test="authorName != null and authorName != ''"> and author_name like concat('%',#{authorName},'%') </if>
+            <if test="isbn != null and isbn != ''"> and isbn like concat('%',#{isbn},'%') </if>
+            <if test="fileFormat != null and fileFormat != ''"> and file_format = #{fileFormat} </if>
+            <if test="status != null and status != ''"> and status = #{status} </if>
+        </where>
+    </select>
+
+    <insert id="save" parameterType="com.java2nb.novel.domain.EbookDO">
+        insert into ebook
+        (`book_name`,`author_name`,`isbn`,`cover_url`,`file_url`,`file_format`,`file_size`,`intro`,`author_intro`,`status`,`sort`,`create_time`,`create_user_id`,`update_time`,`update_user_id`)
+        values
+        (#{bookName},#{authorName},#{isbn},#{coverUrl},#{fileUrl},#{fileFormat},#{fileSize},#{intro},#{authorIntro},#{status},#{sort},#{createTime},#{createUserId},#{updateTime},#{updateUserId})
+    </insert>
+
+    <update id="update" parameterType="com.java2nb.novel.domain.EbookDO">
+        update ebook
+        <set>
+            <if test="bookName != null">`book_name` = #{bookName}, </if>
+            <if test="authorName != null">`author_name` = #{authorName}, </if>
+            <if test="isbn != null">`isbn` = #{isbn}, </if>
+            <if test="coverUrl != null">`cover_url` = #{coverUrl}, </if>
+            <if test="fileUrl != null">`file_url` = #{fileUrl}, </if>
+            <if test="fileFormat != null">`file_format` = #{fileFormat}, </if>
+            <if test="fileSize != null">`file_size` = #{fileSize}, </if>
+            <if test="intro != null">`intro` = #{intro}, </if>
+            <if test="authorIntro != null">`author_intro` = #{authorIntro}, </if>
+            <if test="status != null">`status` = #{status}, </if>
+            <if test="sort != null">`sort` = #{sort}, </if>
+            <if test="updateTime != null">`update_time` = #{updateTime}, </if>
+            <if test="updateUserId != null">`update_user_id` = #{updateUserId}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <delete id="remove">
+        delete from ebook where id = #{value}
+    </delete>
+
+    <delete id="batchRemove">
+        delete from ebook where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

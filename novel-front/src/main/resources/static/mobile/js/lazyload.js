@@ -125,6 +125,10 @@
             }, observerConfig);
 
             Array.prototype.forEach.call(this.images, function (image) {
+                // 兼容部分页面把空值或非 DOM 节点传进懒加载，避免控制台抛 MutationObserver/observe 异常。
+                if (!image || image.nodeType !== 1) {
+                    return;
+                }
                 self.observer.observe(image);
             });
         },
@@ -140,6 +144,10 @@
 
             let self = this;
             Array.prototype.forEach.call(this.images, function (image) {
+                // 懒加载兜底批量加载时同样跳过无效节点，避免无图页面报错。
+                if (!image || image.nodeType !== 1) {
+                    return;
+                }
                 let src = image.getAttribute(self.settings.src);
                 let srcset = image.getAttribute(self.settings.srcset);
                 if ("img" === image.tagName.toLowerCase()) {

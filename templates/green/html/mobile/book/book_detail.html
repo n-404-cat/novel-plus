@@ -3,13 +3,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title th:utext="${book.bookName}+'小说最新章节免费阅读和下载'"></title>
+    <title th:utext="${book.bookName}+'小说最新章节免费阅读'"></title>
 
     <meta name="keywords"
-          th:content="${book.bookName}+','+${book.bookName}+'最新章节,'+${book.bookName}+'免费阅读,'+${book.bookName}+'TXT下载'">
+          th:content="${book.bookName}+','+${book.bookName}+'最新章节,'+${book.bookName}+'免费阅读'">
 
     <meta name="description"
-          th:content="${book.bookName}+'最新章节列表,'+${book.bookName}+'最新更新章节免费无广告无弹窗在线阅读,'+${book.bookName}+'小说TXT免费下载。'">
+          th:content="${book.bookName}+'最新章节列表,'+${book.bookName}+'最新更新章节免费无广告无弹窗在线阅读。'">
 
 
     <div th:include="mobile/common/css :: css"></div>
@@ -164,10 +164,6 @@
                 style="border: 1px solid #3eaf7c;color: #3eaf7c;background-color:#fff!important"
                 class="layui-btn layui-btn-sm layui-btn-radius ">加入书架
         </button>
-
-        <!--
-            <button type="button" onclick="downloadFile()" class="layui-btn layui-btn-sm layui-btn-radius layui-bg-normal">下载TXT</button>
-        -->
     </div>
     <p style="line-height: 23px;padding: 10px;font-size: 14px;color: #333;" th:utext="${book.bookDesc}">
 

@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head th:replace="~{common/header :: common_head(~{::title},~{::meta},~{::link},~{})}">
+    <title th:text="${ebook == null ? '电子书阅读' : ebook.bookName}+'_'+${application.website.name}"></title>
+    <meta name="keywords" content="电子书,在线阅读"/>
+    <meta name="description" content="电子书在线阅读"/>
+    <link rel="stylesheet" href="/css/ebook.css"/>
+</head>
+<body class="body ebook-reader-body">
+<div th:replace="~{common/top :: top(6)}"></div>
+<div class="ebook-reader-wrap" th:if="${ebook != null}"
+     th:with="format=${ebook.fileFormat == null ? '' : #strings.toLowerCase(ebook.fileFormat)}">
+    <div class="ebook-reader-head">
+        <h1 th:text="${ebook.bookName}"></h1>
+        <a th:href="'/ebook/'+${ebook.id}+'.html'">返回详情</a>
+    </div>
+
+    <div class="ebook-pdf-layout" th:if="${format == 'pdf'}">
+        <div class="ebook-toc">
+            <h3>PDF目录</h3>
+            <p>当前先提供页码跳转。若文件本身包含书签，浏览器阅读器也可展开内置目录。</p>
+            <div class="ebook-pdf-jump">
+                <input id="pdfPageNo" type="number" min="1" value="1"/>
+                <button type="button" onclick="jumpPdfPage()">跳转</button>
+            </div>
+        </div>
+        <div class="ebook-reader-main">
+            <iframe id="pdfFrame" th:data-file="'/ebook/pdf-'+${ebook.id}+'.pdf'" th:src="'/ebook/pdf-'+${ebook.id}+'.pdf'" title="PDF在线阅读"></iframe>
+        </div>
+    </div>
+
+    <div th:if="${format == 'epub'}">
+        <div class="ebook-error" th:if="${epubRead.errorMessage != null}" th:text="${epubRead.errorMessage}"></div>
+        <div class="ebook-epub-layout" th:if="${epubRead.errorMessage == null}">
+            <div class="ebook-toc">
+                <h3>EPUB目录</h3>
+                <a th:each="chapter : ${epubRead.chapters}"
+                   th:class="${chapter.active ? 'active' : ''}"
+                   th:href="'/ebook/read-'+${ebook.id}+'.html?chapter='+${chapter.index}"
+                   th:text="${chapter.title}"></a>
+            </div>
+            <div class="ebook-epub-content" th:utext="${epubRead.content}"></div>
+        </div>
+    </div>
+
+    <div th:if="${format == 'txt'}">
+        <div class="ebook-txt-toolbar">
+            <a th:if="${txtRead.hasPrev}" th:href="'/ebook/read-'+${ebook.id}+'.html?pageNo='+${txtRead.pageNo - 1}">上一页</a>
+            <span th:text="'第 '+${txtRead.pageNo}+' 页'"></span>
+            <a th:if="${txtRead.hasNext}" th:href="'/ebook/read-'+${ebook.id}+'.html?pageNo='+${txtRead.pageNo + 1}">下一页</a>
+        </div>
+        <div class="ebook-txt-reader" th:utext="${txtRead.content}"></div>
+        <div class="ebook-txt-toolbar bottom">
+            <a th:if="${txtRead.hasPrev}" th:href="'/ebook/read-'+${ebook.id}+'.html?pageNo='+${txtRead.pageNo - 1}">上一页</a>
+            <span th:text="'第 '+${txtRead.pageNo}+' 页'"></span>
+            <a th:if="${txtRead.hasNext}" th:href="'/ebook/read-'+${ebook.id}+'.html?pageNo='+${txtRead.pageNo + 1}">下一页</a>
+        </div>
+    </div>
+
+    <div class="ebook-unsupported" th:if="${format == 'azw3' || format == 'mobi'}">
+        当前格式 <b th:text="${#strings.toUpperCase(format)}"></b> 暂不支持在线预览。后续接入转换服务后会支持在线打开。
+    </div>
+    <div class="ebook-unsupported" th:if="${format != 'pdf' && format != 'epub' && format != 'txt' && format != 'azw3' && format != 'mobi'}">
+        当前文件格式暂不支持在线阅读，请联系管理员检查电子书格式。
+    </div>
+</div>
+<div class="ebook-empty" th:if="${ebook == null}">电子书不存在或已下架。</div>
+<div th:replace="~{common/footer :: footer}"></div>
+<div th:replace="~{common/js :: js}"></div>
+<script type="text/javascript">
+    function jumpPdfPage() {
+        var input = document.getElementById('pdfPageNo');
+        var frame = document.getElementById('pdfFrame');
+        if (!input || !frame) {
+            return;
+        }
+        var pageNo = parseInt(input.value, 10);
+        if (!pageNo || pageNo < 1) {
+            pageNo = 1;
+            input.value = 1;
+        }
+        // PDF 目录暂用浏览器原生 page fragment 跳转，避免引入额外 PDF 转换服务。
+        frame.src = frame.getAttribute('data-file') + '#page=' + pageNo;
+    }
+</script>
+</body>
+</html>

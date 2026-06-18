@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head th:replace="~{common/header :: common_head(~{::title},~{::meta},~{::link},~{})}">
+    <title th:text="${ebook == null ? '电子书不存在' : ebook.bookName}+'_'+${application.website.name}"></title>
+    <meta name="keywords" th:content="${ebook == null ? '电子书' : ebook.bookName}"/>
+    <meta name="description" th:content="${ebook == null ? '电子书不存在' : ebook.intro}"/>
+    <link rel="stylesheet" href="/css/about.css"/>
+    <link rel="stylesheet" href="/css/ebook.css"/>
+</head>
+<body class="body">
+<div th:replace="~{common/top :: top(6)}"></div>
+<div class="main box_center cf">
+    <div class="ebook-detail" th:if="${ebook != null}">
+        <div class="ebook-cover">
+            <img th:src="${ebook.coverUrl == null || ebook.coverUrl == '' ? '/images/default.gif' : ebook.coverUrl}" th:alt="${ebook.bookName}"/>
+        </div>
+        <div class="ebook-meta">
+            <h1 th:text="${ebook.bookName}"></h1>
+            <p><b>作者：</b><span th:text="${ebook.authorName == null || ebook.authorName == '' ? '未知' : ebook.authorName}"></span></p>
+            <p><b>ISBN：</b><span th:text="${ebook.isbn == null || ebook.isbn == '' ? '-' : ebook.isbn}"></span></p>
+            <p><b>格式：</b><span th:text="${#strings.toUpperCase(ebook.fileFormat)}"></span></p>
+            <div class="ebook-actions">
+                <a class="ebook-read-btn" th:href="'/ebook/read-'+${ebook.id}+'.html'">在线阅读</a>
+            </div>
+        </div>
+        <div class="ebook-section">
+            <h2>内容简介</h2>
+            <p th:text="${ebook.intro == null || ebook.intro == '' ? '暂无简介' : ebook.intro}"></p>
+        </div>
+        <div class="ebook-section">
+            <h2>作者简介</h2>
+            <p th:text="${ebook.authorIntro == null || ebook.authorIntro == '' ? '暂无作者简介' : ebook.authorIntro}"></p>
+        </div>
+    </div>
+    <div class="ebook-empty" th:if="${ebook == null}">电子书不存在或已下架。</div>
+</div>
+<div th:replace="~{common/footer :: footer}"></div>
+<div th:replace="~{common/js :: js}"></div>
+</body>
+</html>

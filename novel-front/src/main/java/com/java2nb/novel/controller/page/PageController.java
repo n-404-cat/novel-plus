@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,8 @@ public class PageController extends BaseController {
     private final NewsService newsService;
 
     private final AnnouncementService announcementService;
+
+    private final EbookService ebookService;
 
     private final AuthorService authorService;
 
@@ -364,6 +367,42 @@ public class PageController extends BaseController {
         Announcement announcement = announcementService.queryAnnouncementInfo(announcementId);
         model.addAttribute("announcement", announcement);
         return "about/announcement_info";
+    }
+
+    /**
+     * 电子书列表页。
+     */
+    @RequestMapping("/ebook.html")
+    public String ebookList() {
+        // 显式返回列表模板，避免通用 "{url}.html" 路由把 ebook 误解析到同名目录。
+        return "ebook_list";
+    }
+
+    /**
+     * 电子书详情页。
+     */
+    @RequestMapping("/ebook/{ebookId}.html")
+    public String ebookInfo(@PathVariable("ebookId") Long ebookId, Model model) {
+        // 电子书详情只展示上架数据，避免下架文件被直接 URL 访问。
+        Ebook ebook = ebookService.queryEbookInfo(ebookId);
+        model.addAttribute("ebook", ebook);
+        return "ebook/detail";
+    }
+
+    /**
+     * 电子书阅读页。
+     */
+    @RequestMapping("/ebook/read-{ebookId}.html")
+    public String ebookRead(@PathVariable("ebookId") Long ebookId,
+        @RequestParam(value = "pageNo", defaultValue = "1") int pageNo,
+        @RequestParam(value = "chapter", defaultValue = "0") int chapterIndex,
+        Model model) {
+        Ebook ebook = ebookService.queryEbookInfo(ebookId);
+        model.addAttribute("ebook", ebook);
+        // TXT 和 EPUB 不能再让浏览器一次性直接加载原文件，统一由服务端按页/章节输出安全内容。
+        model.addAttribute("txtRead", ebookService.readTxtContent(ebook, pageNo));
+        model.addAttribute("epubRead", ebookService.readEpubContent(ebook, chapterIndex));
+        return "ebook/read";
     }
 
 

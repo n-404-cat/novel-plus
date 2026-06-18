@@ -2,7 +2,7 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
-<head th:replace="common/header :: common_head(~{::title},~{::meta},~{::link},~{})">
+<head th:replace="~{common/header :: common_head(~{::title},~{::meta},~{::link},~{})}">
     <title th:text="${application.website.name}+'_原创小说网站'"></title>
     <meta name="keywords" th:content="${application.website.keyword}"/>
     <meta name="description"
@@ -14,7 +14,7 @@
 <body>
 
 
-<div th:replace="common/top :: top('0')">
+<div th:replace="~{common/top :: top('0')}">
 </div>
 
 <div class="announcement-bar box_center cf" id="announcementBar">
@@ -197,12 +197,12 @@
     </div>
 </div>
 
-<div th:replace="common/footer :: footer">
+<div th:replace="~{common/footer :: footer}">
 </div>
 
 
 </body>
-<div th:replace="common/js :: js"></div>
+<div th:replace="~{common/js :: js}"></div>
 <script src="/javascript/lazyload.js" type="text/javascript"></script>
 <script src="/javascript/announcement.js?v=2026061601" type="text/javascript"></script>
 <script language="javascript" type="text/javascript">

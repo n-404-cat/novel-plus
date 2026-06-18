@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="ebookForm(ebook)">
+    <div class="form-group">
+        <label class="col-sm-3 control-label">封面：</label>
+        <div class="col-sm-8">
+            <input id="coverUrl" name="coverUrl" th:value="${ebook == null ? '' : ebook.coverUrl}" type="hidden">
+            <img id="picImagecoverUrl" th:src="${ebook == null || ebook.coverUrl == null || ebook.coverUrl == '' ? '/img/webuploader.png' : ebook.coverUrl}"
+                 style="width: 100px; height: 130px; cursor: pointer; object-fit: cover; border: 1px solid #ddd;"/>
+            <span class="help-block m-b-none">点击图片上传封面，建议 JPG/PNG/WebP。</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">电子书文件：</label>
+        <div class="col-sm-8">
+            <input id="fileUrl" name="fileUrl" th:value="${ebook == null ? '' : ebook.fileUrl}" type="hidden">
+            <input id="fileFormat" name="fileFormat" th:value="${ebook == null ? '' : ebook.fileFormat}" type="hidden">
+            <input id="fileSize" name="fileSize" th:value="${ebook == null || ebook.fileSize == null ? 0 : ebook.fileSize}" type="hidden">
+            <button id="ebookFilePicker" type="button" class="btn btn-info">
+                <i class="fa fa-upload"></i> 上传电子书
+            </button>
+            <span id="ebookFileName" th:text="${ebook == null || ebook.fileUrl == null || ebook.fileUrl == '' ? '未上传' : ebook.fileUrl}"
+                  style="margin-left: 12px;"></span>
+            <span class="help-block m-b-none">支持 PDF、TXT、EPUB、AZW3、MOBI。AZW3/MOBI 第一阶段仅管理文件，暂不在线预览。</span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">书名：</label>
+        <div class="col-sm-8">
+            <input id="bookName" name="bookName" th:value="${ebook == null ? '' : ebook.bookName}" class="form-control" type="text" maxlength="200">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">作者：</label>
+        <div class="col-sm-8">
+            <input id="authorName" name="authorName" th:value="${ebook == null ? '' : ebook.authorName}" class="form-control" type="text" maxlength="100">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">ISBN：</label>
+        <div class="col-sm-8">
+            <input id="isbn" name="isbn" th:value="${ebook == null ? '' : ebook.isbn}" class="form-control" type="text" maxlength="50">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">简介：</label>
+        <div class="col-sm-8">
+            <textarea id="intro" name="intro" class="form-control" rows="5" th:text="${ebook == null ? '' : ebook.intro}"></textarea>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">作者简介：</label>
+        <div class="col-sm-8">
+            <textarea id="authorIntro" name="authorIntro" class="form-control" rows="4" th:text="${ebook == null ? '' : ebook.authorIntro}"></textarea>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">排序：</label>
+        <div class="col-sm-3">
+            <input id="sort" name="sort" th:value="${ebook == null || ebook.sort == null ? 0 : ebook.sort}" class="form-control" type="number">
+        </div>
+        <span class="help-block m-b-none">数字越大越靠前。</span>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label">状态：</label>
+        <div class="col-sm-8">
+            <label class="radio-inline"><input type="radio" name="status" value="1" th:checked="${ebook == null || ebook.status == null || ebook.status == 1}"> 上架</label>
+            <label class="radio-inline"><input type="radio" name="status" value="0" th:checked="${ebook != null && ebook.status == 0}"> 下架</label>
+        </div>
+    </div>
+</div>
+</body>
+</html>

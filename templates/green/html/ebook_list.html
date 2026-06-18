@@ -1,0 +1,28 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head th:replace="~{common/header :: common_head(~{::title},~{::meta},~{::link},~{})}">
+    <title th:text="'电子书_'+${application.website.name}"></title>
+    <meta name="keywords" content="电子书,在线阅读,PDF,TXT,EPUB"/>
+    <meta name="description" th:content="${application.website.name}+'电子书在线阅读'"/>
+    <link rel="stylesheet" href="/css/about.css"/>
+    <link rel="stylesheet" href="/css/ebook.css"/>
+</head>
+<body class="body">
+<div th:replace="~{common/top :: top(6)}"></div>
+<div class="main box_center cf">
+    <div class="ebook-page">
+        <div class="ebook-title">电子书</div>
+        <div class="ebook-search">
+            <input id="ebookKeyword" type="text" placeholder="输入书名、作者、ISBN 或简介关键词"/>
+            <button type="button" onclick="searchEbook(1, 12)">搜索</button>
+        </div>
+        <div class="ebook-grid" id="ebookList"></div>
+        <div class="pageBox cf" id="ebookPage"></div>
+    </div>
+</div>
+<div th:replace="~{common/footer :: footer}"></div>
+<div th:replace="~{common/js :: js}"></div>
+<script src="/javascript/ebook.js?v=2026061801" type="text/javascript"></script>
+</body>
+</html>
